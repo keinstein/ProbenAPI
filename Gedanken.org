@@ -1,0 +1,56 @@
+* Aufgabenstellung
+
+Es soll ein API zur Verwaltung von Proben bereitgestellt werden.
+Ein Probe verfügt über folgende Eigenschaften:
+
+- eine eindeutige Identifikation
+- das Datum und Uhrzeit der Probennahme
+- einen Messwert der Untersuchung
+- das Ergebnis einer Untersuchung (ergibt sich aus dem Messwert als positiv, fraglich, negativ)
+
+Das API muss folgende Funktionalität anbieten:
+
+- Auflistung aller existierenden Proben
+- sortiert nach Zeitpunkt der Probennahme
+- gefiltert nach Ergebnis
+- Hinzufügen neuer Proben
+- Ergänzen des Messwertes zu einer Probe
+- Löschen einer Probe
+
+Für das API soll es mindestens zwei mögliche Implementierungen geben (z.B. In-Memory, Speicherung in Datei, Speicherung in Datenbank, ...).
+Ein Client-Programm nutzt das API, um Proben zu verwalten. Das Client-Programm kann dabei alternativ verschiedene Implementierungen nutzen.
+
+Anforderungen
+
+- Es soll Java 12 und JUnit 5 verwendet werden.
+- Mindestens das API soll über eine sinnvolle Dokumentation im Quelltext verfügen.
+- Der Code soll, da wo sinnvoll, die neuen Sprachmittel der eingesetzten Java-Version verwenden.
+- Der Code soll durch sinnvolle automatische Tests abgedeckt sein.
+- Die Entwicklungsumgebung kann frei gewählt werden.
+- Der Code soll in einem Git-Repository (lokal oder z.B. GitHub) bereitgestellt werden.
+- Optional kann ein Build-System (z.B. Maven) eingesetzt werden.
+
+Abgrenzungen
+
+- Es muss keine mehrschichtige Architektur mit getrennten Modulen oder Client/Server entwickelt werden, es reichen die Java-Sprachmittel zur Abgrenzung.
+- Eine grafische Benutzeroberfläche ist nicht notwendig. Das Client-Programm kann auch einen beispielhaften Ablauf simulieren.
+
+Hinweise
+
+- Grundsätzlich sind alle Hilfsmittel erlaubt, die auch im normalen Arbeitsalltag zur Verfügung stehen (z.B. Internet, Kollegen, frühere Arbeiten)
+- Die Arbeit kann Zuhause erfolgen.
+- Das Ergebnis soll vorab als Git-Repository zur Verfügung gestellt werden und kann anschließend persönlich vorgestellt werden.
+
+
+* Grundlegende Eigenschaften
+- Namensraum :: de.schlemmersoft.bewerbung1
+* Pakete
+** ProbenAPI
+- Interfaces ::
+  - de.schlemmersoft.bewerbung1.ProbenAPI :: Verwaltungs-API
+  - de.schlemmersoft.bewerbung1.ProbenAPI.Probe :: 
+- Klassen ::
+  - de.schlemmersoft.bewerbung1.GenericProbe
+** Proben_SQL
+- Backend :: JDBC oder HSQL
+- Klasse :: de.schlemmersoft.bewerbung1
