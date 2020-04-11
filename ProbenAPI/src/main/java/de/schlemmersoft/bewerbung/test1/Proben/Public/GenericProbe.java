@@ -21,7 +21,6 @@ public class GenericProbe implements Probe {
 	 * Storage for the value of the measurement.
 	 */
 	protected Probe.Messwert value;
-	protected boolean hasValue;
 
 	/**
 	 * Constructs a sample without measurement data.
