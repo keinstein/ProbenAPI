@@ -1,16 +1,14 @@
-package de.schlemmersoft.bewerbung.test1;
+package de.schlemmersoft.bewerbung.test1.Proben.Public;
 
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
 import java.time.ZonedDateTime;
 
 import de.schlemmersoft.bewerbung.test1.Proben.Public.ProbenAPI.Probe;
 import de.schlemmersoft.bewerbung.test1.Proben.Public.ProbenAPI.Probe.Interpretation;
-import de.schlemmersoft.bewerbung.test1.Proben.Public.GenericProbe;
 
 
 
