@@ -48,10 +48,10 @@ public class GenericProbeTest {
 
 		GenericProbe probe = new GenericProbe("This is another Id",
 						      time);
-		assertEquals("This is an Id",probe.getID());
+		assertEquals("This is another Id",probe.getID());
 		intvalue value  = (intvalue)probe.getValue();
-		assertEquals(null,value.value);
-		assertEquals(Interpretation.GOOD,probe.getResult());
+		assertEquals(null,value);
+		assertEquals(Interpretation.FUZZY,probe.getResult());
 		assertEquals(time,probe.getTime());
 	}
 }

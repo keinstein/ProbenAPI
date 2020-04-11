@@ -35,7 +35,9 @@ public class GenericProbe implements Probe {
 		value = v;
 	}
 	public Probe.Interpretation getResult() {
-		return value.getResult();
+		if (value != null)
+			return value.getResult();
+		return Probe.Interpretation.FUZZY;
 	}
 }
 
