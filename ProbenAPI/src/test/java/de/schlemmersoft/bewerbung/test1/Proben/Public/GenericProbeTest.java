@@ -21,7 +21,7 @@ public class GenericProbeTest {
 		public intvalue(int v) {
 			value = v;
 		}
-		public Interpretation getResult() {
+		public Interpretation getInterpretation() {
 			if (value > 0) return Interpretation.GOOD;
 			if (value < 0) return Interpretation.BAD;
 			return Interpretation.FUZZY;
@@ -38,7 +38,7 @@ public class GenericProbeTest {
 		assertEquals("This is an Id",probe.getID());
 		intvalue value  = (intvalue)probe.getValue();
 		assertEquals(5,value.value);
-		assertEquals(Interpretation.GOOD,probe.getResult());
+		assertEquals(Interpretation.GOOD,probe.getInterpretation());
 		assertEquals(time,probe.getTime());
 	}
 
@@ -51,7 +51,7 @@ public class GenericProbeTest {
 		assertEquals("This is another Id",probe.getID());
 		intvalue value  = (intvalue)probe.getValue();
 		assertEquals(null,value);
-		assertEquals(Interpretation.FUZZY,probe.getResult());
+		assertEquals(Interpretation.FUZZY,probe.getInterpretation());
 		assertEquals(time,probe.getTime());
 	}
 }

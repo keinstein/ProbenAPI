@@ -63,10 +63,10 @@ public class GenericProbe implements Probe {
 	public void setValue(Probe.Messwert v) {
 		value = v;
 	}
-	public Probe.Interpretation getResult() {
+
+	public Probe.Interpretation getInterpretation() {
 		if (value != null)
-			return value.getResult();
+			return value.getInterpretation();
 		return Probe.Interpretation.FUZZY;
 	}
 }
-

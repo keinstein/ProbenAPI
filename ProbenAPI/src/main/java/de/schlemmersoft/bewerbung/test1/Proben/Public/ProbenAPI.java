@@ -72,7 +72,12 @@ public interface ProbenAPI extends Iterable<Probe> {
 		 * @author Tobias Schlemmer
 		 */
 		public interface Messwert {
-			Interpretation getResult();
+			/**
+			 * Evaluate and interpret the measurement value.
+			 *
+			 * @return interpretation value.
+			 */
+			Interpretation getInterpretation();
 		}
 
 		/**
