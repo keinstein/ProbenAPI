@@ -43,14 +43,19 @@ Hinweise
 
 
 * Grundlegende Eigenschaften
-- Namensraum :: de.schlemmersoft.bewerbung1
+- Namensraum :: de.schlemmersoft.bewerbung1.Proben
 * Pakete
 ** ProbenAPI
 - Interfaces ::
-  - de.schlemmersoft.bewerbung1.ProbenAPI :: Verwaltungs-API
-  - de.schlemmersoft.bewerbung1.ProbenAPI.Probe :: 
+  - de.schlemmersoft.bewerbung1.Proben.Public.ProbenAPI :: Verwaltungs-API
+  - de.schlemmersoft.bewerbung1.Proben.Public.ProbenAPI.Probe :: API fur eine einzelne Probe
+  - de.schlemmersoft.bewerbung1.Proben.Public.ProbenAPI.Probe.Messwert :: Abstraktionsapi für Messwert
 - Klassen ::
-  - de.schlemmersoft.bewerbung1.GenericProbe
+  - de.schlemmersoft.bewerbung.test1.Proben.Public.GenericProbe :: Eine einfache Probenklasse
+** ProbenVector
+- Backend :: Vector<Probe>
+** ProbenFile
+Kindklasse von ProbenVector mit Serialisierungsfunktion
 ** Proben_SQL
 - Backend :: JDBC oder HSQL
 - Klasse :: de.schlemmersoft.bewerbung1
