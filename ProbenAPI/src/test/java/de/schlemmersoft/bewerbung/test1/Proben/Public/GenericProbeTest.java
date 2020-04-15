@@ -49,6 +49,7 @@ public class GenericProbeTest {
 			return new intvalue(value);
 		}
 
+		@Override
 		public Interpretation getInterpretation() {
 			if (value > 0) return Interpretation.GOOD;
 			if (value < 0) return Interpretation.BAD;

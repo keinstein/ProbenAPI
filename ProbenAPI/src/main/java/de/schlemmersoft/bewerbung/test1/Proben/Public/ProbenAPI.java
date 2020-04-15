@@ -46,7 +46,7 @@ public interface ProbenAPI extends Iterable<Probe> {
 		 * Return values for the interpretation of a sample measurement.
 		 * @author Tobias Schlemmer
 		 */
-		enum Interpretation {
+		public static enum Interpretation {
 			/**
 			 * The result was bad (whatever that means).
 			 */
