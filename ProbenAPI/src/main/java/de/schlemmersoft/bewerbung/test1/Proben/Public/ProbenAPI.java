@@ -40,7 +40,7 @@ public interface ProbenAPI extends Iterable<Probe> {
 	 *
 	 * @author Tobias Schlemmer
 	 */
-	public interface Probe {
+	public static interface Probe extends Cloneable {
 		/**
 		 *
 		 * Return values for the interpretation of a sample measurement.
@@ -71,7 +71,21 @@ public interface ProbenAPI extends Iterable<Probe> {
 		 *       analysed.
 		 * @author Tobias Schlemmer
 		 */
-		public interface Messwert {
+		public static interface Messwert extends Cloneable {
+			/**
+			 * Check that two measurement values are equal.
+			 *
+			 * @param other the measurement value we compare to.
+			 * @return true if the measurement values can be decoded to the same value.
+			 */
+			boolean equals(Messwert other);
+
+			/**
+			 * Create a copy of the object.
+			 * @return A copy of the current Messwert object.
+			 */
+			Messwert clone();
+
 			/**
 			 * Evaluate and interpret the measurement value.
 			 *
@@ -79,6 +93,20 @@ public interface ProbenAPI extends Iterable<Probe> {
 			 */
 			Interpretation getInterpretation();
 		}
+
+		/**
+		 * Compare two samples.
+		 *
+		 * @param other the other sample to compare.
+		 * @return #true if both samples describe the same measurement and outcome.
+		 */
+		boolean equals (Probe other);
+
+		/**
+		 * Create a copy of this Probe
+		 * @return a new object created as a copy of this Probe.
+		 */
+		Probe clone();
 
 		/**
 		 * Return the identifier of the sample.
