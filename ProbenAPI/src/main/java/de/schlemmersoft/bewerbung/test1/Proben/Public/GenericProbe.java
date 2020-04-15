@@ -14,11 +14,11 @@ public class GenericProbe implements Probe, Cloneable {
 	/**
 	 * Storage for the ID of the sample.
 	 */
-	protected String id;
+	final protected String id;
 	/**
 	 * Storage for date, time and time zone of the measurement.
 	 */
-	protected ZonedDateTime time;
+	final protected ZonedDateTime time;
 	/**
 	 * Storage for the value of the measurement.
 	 */
@@ -31,22 +31,23 @@ public class GenericProbe implements Probe, Cloneable {
 	 * @param t Date/Time/Timezone of the measurement.
 	 */
 	public GenericProbe(String i, ZonedDateTime t) {
-		id = i;
+		id = new String(i);
 		time = t;
 		value = null;
 	}
 
 	/**
-	 * Constructs a sample with measurement data.
+	 * Constructs a sample with measurement data. The data is cloned.
 	 *
 	 * @param i Unique dentifier as provided by the global storage or other means.
 	 * @param t Date/Time/Timezone of the measurement.
 	 * @param v Value object conaining the measurement value of the sample.
 	 */
-	public GenericProbe(String i, ZonedDateTime t, Probe.Messwert v) {
-		id = i;
+	public GenericProbe(String i, ZonedDateTime t, Messwert v) {
+		id = new String(i);
 		time = t;
-		value = v;
+		value = v.clone();
+	}
 
 	/**
 	 * Compare a sample to some JAVA object.
