@@ -1,5 +1,7 @@
 package de.schlemmersoft.bewerbung.test1.Proben.Vector;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -116,6 +118,8 @@ public abstract class ProbenVector<T extends Comparable<T>,VectorProbe extends G
 			return new FilterIterator();
 		}
 		
+	ProbenVector () {
+		data = new Vector<>();
 	}
 	
 	Iterator<Probe<T>> findId (String id) {

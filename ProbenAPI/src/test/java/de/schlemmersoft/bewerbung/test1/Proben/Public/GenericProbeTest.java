@@ -134,19 +134,31 @@ public class GenericProbeTest {
 			 );
 	}
 
-	public void testClone(GenericProbe probe) {
-		GenericProbe probe2 = probe.clone();
+	void checkCloneResult(IntProbe probe, IntProbe probe2) {
+		assertNotNull(probe2);
 		assertFalse ( probe2 == probe );
+		assertTrue ( probe.equals(probe2));
 		assertEquals( probe, probe2 );
 		assertFalse ( probe2.getID() == probe.getID());
 		assertEquals( probe2.getID(), probe.getID());
 		assertTrue  ( probe2.getInterpretation() == probe.getInterpretation());
-		assertFalse ( probe2.getValue() == probe.getValue());
+		if (probe.getValue() == null)
+			assertTrue( probe2.getValue() == probe.getValue() );
+		else
+			assertFalse( probe2.getValue() == probe.getValue());
 		assertEquals( probe2.getValue(), probe.getValue());
 	}
 
+	public void testClone(IntProbe probe) throws CloneNotSupportedException {
+		IntProbe probe2 = probe.clone();
+		checkCloneResult(probe, probe2);
+
+		probe2 = new IntProbe(probe);
+		checkCloneResult(probe, probe2);
+	}
+
 	@Test
-	public void testEquals() {
+	public void testEquals() throws CloneNotSupportedException {
 		String id1 = "Id 1";
 		String id2 = "Id 2";
 		ZonedDateTime t1 = ZonedDateTime.now();
@@ -186,7 +198,7 @@ public class GenericProbeTest {
 	public void testFullConstructor( String testId,
 					 ZonedDateTime testtime,
 					 int testValue,
-					 Interpretation testInterpretation) {
+					 Interpretation testInterpretation) throws CloneNotSupportedException {
 
 		IntProbe probe = new IntProbe(testId,
 						      testtime,
@@ -205,7 +217,7 @@ public class GenericProbeTest {
 	public void testReducedConstructor( String testId,
 					    ZonedDateTime testtime,
 					    int testValue,
-					    Interpretation testInterpretation ) {
+					    Interpretation testInterpretation ) throws CloneNotSupportedException {
 		IntProbe probe = new IntProbe( testId,
 						       testtime );
 		assertEquals( testId, probe.getID() );
@@ -214,7 +226,15 @@ public class GenericProbeTest {
 		assertEquals( Interpretation.FUZZY, probe.getInterpretation() ); // undefined behaviour.
 		assertEquals( testtime, probe.getTime() );
 
+		testClone(probe);
+
+		IntProbe probe2 = probe.clone();
+		assertNotNull(probe2);
+
 		probe.setValue( MyInteger.valueOf( testValue ) );
+
+		assertNotEquals(probe,probe2);
+		assertNotEquals(probe2,probe);
 
 		assertEquals(testId,probe.getID());
 		MyInteger newvalue  = probe.getValue();
