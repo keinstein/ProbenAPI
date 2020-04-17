@@ -174,19 +174,20 @@ public interface ProbenAPI<T> extends Iterable<Probe<T> > {
 	/**
 	 * Delete the sample that is referenced by the passed unique identifier.
 	 *
-	 * It is undefined what happens when no sample can be referenced by the given identifier.
+	 * If it does not exist, undefined behavior may
+	 * occur. 
 	 * @param id The unique identifier of the sample that shall be removed from the database.
 	 */
-	void del (String id);
+	void remove (String id);
 
 	/**
-	 * Delete the sample from the database that has the same identifier as the given sample.
+	 * Delete the sample from the database that has the same identifier and time information as the given sample.
 	 *
 	 * Even if the passed sample is not in the database its copy in the database is deleted.
 	 * The copy is identified solely by the identifier. So if the values do
-	 * not match the sample gets removed anyway. If it does not exist, undefined behaviour may
+	 * not match the sample gets removed anyway. If it does not exist, undefined behavior may
 	 * occur.
 	 * @param sample Sample that shall be removed.
 	 */
-	void del (Probe sample);
+	void remove (Probe<T> sample);
 }
