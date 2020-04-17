@@ -7,110 +7,78 @@ import java.util.Vector;
 import java.time.ZonedDateTime;
 import de.schlemmersoft.bewerbung.test1.Proben.Public.*;
 import static de.schlemmersoft.bewerbung.test1.Proben.Public.ProbenAPI.Probe.Interpretation;
-import de.schlemmersoft.bewerbung.test1.Proben.Public.ProbenAPI.Probe.Messwert;
+
 
 /**
  * Hello world!
  *
  */
-public class ProbenVector
-	implements ProbenAPI
+public abstract class ProbenVector<T extends Comparable<T>,VectorProbe extends GenericProbe<T> >
+	implements ProbenAPI<T>
 {
-	protected Vector<Probe> data;
-	
-	class Mwt implements Messwert, Cloneable {
-		int value;
-			
-		Mwt(int v) {
-			value = v;
-		}
-		
-		@Override
-		public boolean equals (Object other) {
-			if (this == other) return true;
-			if (other instanceof Mwt) return equals((Mwt)other);
-			return false;
-		}
-		
-		@Override
-		public boolean equals(Messwert other) {
-			if (other instanceof Mwt) return equals((Mwt)other);
-			return false;			
-		}
-		
-		public boolean equals(Mwt other) {
-			return value == other.value;
-		}
-		
-		
-		@Override
-		public Mwt clone() {
-			return new Mwt(value);
-		}
-		
-		@Override
-		public Interpretation getInterpretation() {
-			// TODO Auto-generated method stub
-			if (value < 0) return Interpretation.BAD;
-			if (value > 0) return Interpretation.GOOD;
-			return Interpretation.FUZZY;
-		}
+	protected Vector<VectorProbe> data;
 	}
 	
-	interface Filter {
-		boolean accepts(Probe probe);
-	}
-	
-	class RangeFilter implements Filter {
-		int minimum;
-		int maximum;
-		RangeFilter (int min, int max) {
+
+	class RangeFilter<T1 extends Comparable<T1>, P extends Probe<T1> > implements Filter<P> {
+		T1 minimum;
+		T1 maximum;
+		RangeFilter (T1 min, T1 max) {
 			minimum = min;
 			maximum = max;
 		}
 		@Override
-		public boolean accepts(Probe probe) {
-			Mwt measurement = (Mwt)probe.getValue();
-			return minimum <= measurement.value && measurement.value <= maximum;
+		public boolean accepts(P probe) {
+			T1 value = probe.getValue();
+			if (value == null) return false;
+			return minimum.compareTo(value) <= 0 && maximum.compareTo(value) >= 0;
 		}
 		
 	}
 	
-	class InterpretationFilter implements Filter {
+
+	class InterpretationFilter<T1 extends Comparable<T1>, P extends Probe<T1> > implements Filter<P> {
 		Interpretation interpretation;
 		InterpretationFilter (Interpretation key) {
 			interpretation = key;
 		}
 		@Override
-		public boolean accepts(Probe probe) {
+		public boolean accepts(P probe) {
 			return interpretation == probe.getInterpretation();
 		}
 		
 	}
 
 
-	class IdFilter implements Filter {
+	class IdFilter<T1, P extends Probe<T1> > implements Filter<P> {
 		String identifier;
 		IdFilter (String id) {
 			identifier = id;
 		}
 		@Override
-		public boolean accepts (Probe probe) {
+		public boolean accepts (P probe) {
 			return identifier.equals(probe.getID());
 		}
 	}
 
-	class FilteredProben implements Iterable<Probe> {		
-		Filter filter;
-		FilteredProben(Filter probenFilter) {
+	class AllFilter<T1, P extends Probe<T1> > implements Filter<P> {
+		@Override
+		public boolean accepts (P probe) {
+			return true;
+		}
+	}
+
+	class FilteredProben implements Iterable<Probe< T>> {
+		Filter<VectorProbe> filter;
+		FilteredProben(Filter<VectorProbe> probenFilter) {
 			filter = probenFilter;
 		}
 		
 		
-		class FilterIterator implements Iterator<Probe> {
 			int current = 0;
 			int next = 0;
 			
+		class FilterIterator implements Iterator<Probe <T>> {
 			int findNext(int i) {
 				for (; i < data.size() ; ++i) {
 					if (filter.accepts(data.elementAt(i)))
@@ -129,7 +97,7 @@ public class ProbenVector
 			}
 			
 			@Override
-			public Probe next() {
+			public VectorProbe next() {
 				if (next > current) {
 					current = next;
 				} else {
@@ -143,15 +111,15 @@ public class ProbenVector
 		}
 
 		@Override
-		public Iterator<Probe> iterator() {
+		public Iterator<Probe<T>> iterator() {
 			// TODO Auto-generated method stub
 			return new FilterIterator();
 		}
 		
 	}
 	
-	Iterator<Probe> findId (String id) {
-		FilteredProben search = new FilteredProben(new IdFilter(id)); 
+	Iterator<Probe<T>> findId (String id) {
+		FilteredProben search = new FilteredProben(new IdFilter<T,VectorProbe>(id));
 		return search.iterator();
 	}
 	
@@ -183,34 +151,45 @@ public class ProbenVector
 				break;
 		return middle;
 	}
-	
+
+	abstract protected VectorProbe createElement(String id,
+			ZonedDateTime time,
+			T value);
+
 	@Override
-	public GenericProbe add (Probe sample){
-		int pos = findDate (sample.getTime());
+	public VectorProbe add (Probe<T>sample) throws IllegalArgumentException {
+		int pos = findInsertionPoint (sample.getTime());
 		if (pos < data.size()) {
-			data.add(pos,sample.clone());
-			return (GenericProbe)data.elementAt(pos);
+			data.add(pos,
+					createElement(sample.getID(),
+								  sample.getTime(),
+								  sample.getValue()));
+			return data.elementAt(pos);
 		} else {
-			data.add(sample.clone());
-			return (GenericProbe)data.lastElement();
+			data.add(createElement(sample.getID(),
+					  sample.getTime(),
+					  sample.getValue()));
+			return data.lastElement();
 		}
 	}
 	
 	@Override
 	public GenericProbe add (String id, ZonedDateTime time){
 		int pos = findDate (time);
+		checkId(id);
 		if (pos < data.size()) {
-			data.add(pos,new GenericProbe(id, time));
-			return (GenericProbe)data.elementAt(pos);
+			data.add(pos,
+					createElement(id, time, null));
+			return data.elementAt(pos);
 		} else {
-			data.add(new GenericProbe(id, time));
-			return (GenericProbe)data.lastElement();
+			data.add(createElement(id, time, null));
+			return data.lastElement();
 		}
 	}
 	
 	@Override
-	public GenericProbe add(ZonedDateTime time){
-		Iterator<Probe> it;
+	public VectorProbe add(ZonedDateTime time){
+		Iterator<Probe<T>> it;
 		String id;
 		do {
 			UUID uuid = UUID.randomUUID();
@@ -222,28 +201,29 @@ public class ProbenVector
 	
 	@Override
 	public void del (String id){
-		Iterator it = findId(id);
+		Iterator<Probe<T>> it = findId(id);
 		it.remove();
 	}
 	
 	@Override
-	public void del (Probe sample){
-		del(sample.getID());
+	public void remove (Probe<T> sample) throws IllegalArgumentException,
+	                                            IllegalStateException {
 	}
 	
 	@Override
-	public Iterable<Probe> range(int min, int max) {
-		return new FilteredProben(new RangeFilter (min, max));
+	public Iterable<Probe <T>> range(T min, T max) {
+		return new FilteredProben(new RangeFilter<T,VectorProbe> (min, max));
 	}
 	
 	@Override
-	public Iterable<Probe> result(Interpretation key) {
-		return new FilteredProben(new InterpretationFilter(key));
+	public Iterable<Probe<T>> result(Interpretation key) {
+		return new FilteredProben(new InterpretationFilter<T,VectorProbe>(key));
 	}
 
 	@Override
-	public Iterator<Probe> iterator() {
-		return data.iterator();
+	public Iterator<Probe<T> > iterator() {
+		FilteredProben tmp = new FilteredProben(new AllFilter<T,VectorProbe>());
+		return tmp.iterator();
 	}
 
 }

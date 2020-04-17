@@ -11,42 +11,110 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.time.ZonedDateTime;
 import java.util.stream.Stream;
 
-import de.schlemmersoft.bewerbung.test1.Proben.Public.ProbenAPI.Probe;
-import de.schlemmersoft.bewerbung.test1.Proben.Public.ProbenAPI.Probe.Messwert;
-
 import static de.schlemmersoft.bewerbung.test1.Proben.Public.ProbenAPI.Probe.Interpretation;
 
 
 
 public class GenericProbeTest {
+	static class MyInteger {
+		int value;
+		MyInteger(int i) {
+			value = i;
+		}
+		static MyInteger valueOf(int i) {
+			return new MyInteger(i);
+		}
+		public int intValue() {
+			return value;
+		}
 
-	class intvalue implements Probe.Messwert {
+		public boolean equals(Object other) {
+			if (!(other instanceof MyInteger))
+				return false;
+			MyInteger tmp = (MyInteger)other;
+			return value == tmp.value;
+		}
+		public boolean equals(int other) {
+			return value == other;
+		}
+		public boolean equals(MyInteger other) {
+			return value == other.intValue();
+		}
+		public String toString() {
+			return Integer.valueOf(value).toString();
+		}
+	}
+
+	class IntProbe extends GenericProbe <MyInteger>{
+
+		public IntProbe(String i, ZonedDateTime t) {
+			super(i, t);
+		}
+
+		public IntProbe(String i, ZonedDateTime t, int v) {
+			super(i, t, MyInteger.valueOf(v));
+		}
+
+		public IntProbe(IntProbe probe) {
+			super(probe);
+		}
+
+		@Override
+		public Interpretation getInterpretation() {
+			if (value == null)
+				return Interpretation.FUZZY;
+			switch (Integer.signum(value.intValue())) {
+			case -1:
+				return Interpretation.BAD;
+			case 0:
+				return Interpretation.FUZZY;
+			case 1:
+				return Interpretation.GOOD;
+			}
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		protected MyInteger cloneValue(MyInteger v) {
+			if (v == null) return null;
+			int tmp = v.intValue();
+			return MyInteger.valueOf(tmp);
+		}
+
+		@Override
+		public IntProbe clone() throws CloneNotSupportedException {
+			return (IntProbe)super.clone();
+		}
+	}
+	/*
+	class Integer implements Probe.Messwert {
 		public int value;
-		public intvalue(int v) {
+		public Integer.valueOf(int v) {
 			value = v;
 		}
 
 		@Override
 		public boolean equals (Object other) {
 			if (this == other) return true;
-			if (other instanceof intvalue) return equals((intvalue)other);
+			if (other instanceof Integer) return equals((Integer)other);
 			return false;
 		}
 
 		@Override
 		public boolean equals(Messwert other) {
-			if (other instanceof intvalue) return equals((intvalue)other);
+			if (other instanceof Integer) return equals((Integer)other);
 			return false;
 		}
 
-		public boolean equals(intvalue other) {
+		public boolean equals(Integer other) {
 			return value == other.value;
 		}
 
 
 		@Override
-		public intvalue clone() {
-			return new intvalue(value);
+		public Integer clone() {
+			return Integer.valueOf(value);
 		}
 
 		@Override
@@ -56,6 +124,7 @@ public class GenericProbeTest {
 			return Interpretation.FUZZY;
 		}
 	}
+	*/
 
 	static Stream<Arguments> testFullConstructor_Parameters() throws Throwable {
         return Stream.of(
@@ -84,29 +153,29 @@ public class GenericProbeTest {
 		ZonedDateTime t2 = t1.minusYears(1);
 		int i1 = 7;
 		int i2 = 8;
-		intvalue v1 = new intvalue(i1);
-		intvalue v2 = new intvalue(i2);
-		GenericProbe sample = new GenericProbe(id1,t1,v1);
+		Integer v1 = Integer.valueOf(i1);
+		Integer v2 = Integer.valueOf(i2);
+		IntProbe sample = new IntProbe(id1,t1,v1);
 		assertTrue(sample.equals(sample));
-		sample = new GenericProbe(id1,t1,new intvalue(i1));
+		sample = new IntProbe(id1,t1,Integer.valueOf(i1));
 		assertTrue(sample.equals(sample));
-		GenericProbe sample2 = sample.clone();
+		IntProbe sample2 = sample.clone();
 		assertTrue(sample.equals(sample));
-		sample2 = new GenericProbe(id2,t1,v1);
+		sample2 = new IntProbe(id2,t1,v1);
 		assertFalse(sample.equals(sample2));
-		sample2 = new GenericProbe(id1,t2,v1);
+		sample2 = new IntProbe(id1,t2,v1);
 		assertFalse(sample.equals(sample2));
-		sample2 = new GenericProbe(id2,t2,v1);
+		sample2 = new IntProbe(id2,t2,v1);
 		assertFalse(sample.equals(sample2));
-		sample2 = new GenericProbe(id1,t1,v2);
+		sample2 = new IntProbe(id1,t1,v2);
 		assertFalse(sample.equals(sample2));
-		sample2 = new GenericProbe(id2,t1,v2);
+		sample2 = new IntProbe(id2,t1,v2);
 		assertFalse(sample.equals(sample2));
-		sample2 = new GenericProbe(id1,t2,v2);
+		sample2 = new IntProbe(id1,t2,v2);
 		assertFalse(sample.equals(sample2));
-		sample2 = new GenericProbe(id2,t2,v2);
+		sample2 = new IntProbe(id2,t2,v2);
 		assertFalse(sample.equals(sample2));
-		sample2 = new GenericProbe(id1,t1,v1);
+		sample2 = new IntProbe(id1,t1,v1);
 		assertTrue(sample.equals(sample2));
 		assertFalse(sample.equals(this));
 		assertTrue(sample.equals((Object)sample));
@@ -119,12 +188,12 @@ public class GenericProbeTest {
 					 int testValue,
 					 Interpretation testInterpretation) {
 
-		GenericProbe probe = new GenericProbe(testId,
+		IntProbe probe = new IntProbe(testId,
 						      testtime,
-						      new intvalue( testValue ) );
+						      Integer.valueOf( testValue ) );
 		assertEquals(testId,probe.getID());
-		intvalue newvalue  = (intvalue)probe.getValue();
-		assertEquals(testValue,newvalue.value);
+		MyInteger newvalue  = probe.getValue();
+		assertEquals(testValue,newvalue.intValue());
 		assertEquals(testInterpretation,probe.getInterpretation());
 		assertEquals(testtime,probe.getTime());
 
@@ -137,19 +206,19 @@ public class GenericProbeTest {
 					    ZonedDateTime testtime,
 					    int testValue,
 					    Interpretation testInterpretation ) {
-		GenericProbe probe = new GenericProbe( testId,
+		IntProbe probe = new IntProbe( testId,
 						       testtime );
 		assertEquals( testId, probe.getID() );
-		intvalue value  = ( intvalue )probe.getValue();
+		MyInteger value  = probe.getValue();
 		assertEquals( null, value );
 		assertEquals( Interpretation.FUZZY, probe.getInterpretation() ); // undefined behaviour.
 		assertEquals( testtime, probe.getTime() );
 
-		probe.setValue( new intvalue( testValue ) );
+		probe.setValue( MyInteger.valueOf( testValue ) );
 
 		assertEquals(testId,probe.getID());
-		intvalue newvalue  = (intvalue)probe.getValue();
-		assertEquals(testValue,newvalue.value);
+		MyInteger newvalue  = probe.getValue();
+		assertEquals(testValue,newvalue.intValue());
 		assertEquals(testInterpretation,probe.getInterpretation());
 		assertEquals(testtime,probe.getTime());
 

@@ -1,7 +1,6 @@
 package de.schlemmersoft.bewerbung.test1.Proben.Public;
 
 import de.schlemmersoft.bewerbung.test1.Proben.Public.ProbenAPI.Probe;
-import de.schlemmersoft.bewerbung.test1.Proben.Public.ProbenAPI.Probe.Messwert;
 
 import java.time.ZonedDateTime;
 
@@ -10,7 +9,7 @@ import java.time.ZonedDateTime;
  *
  * @author Tobias Schlemmer
  */
-public class GenericProbe implements Probe, Cloneable {
+public abstract class GenericProbe<T> implements Probe<T>, Cloneable {
 	/**
 	 * Storage for the ID of the sample.
 	 */
@@ -22,7 +21,7 @@ public class GenericProbe implements Probe, Cloneable {
 	/**
 	 * Storage for the value of the measurement.
 	 */
-	protected Messwert value;
+	protected T value;
 
 	/**
 	 * Constructs a sample without measurement data.
@@ -43,10 +42,12 @@ public class GenericProbe implements Probe, Cloneable {
 	 * @param t Date/Time/Timezone of the measurement.
 	 * @param v Value object conaining the measurement value of the sample.
 	 */
-	public GenericProbe(String i, ZonedDateTime t, Messwert v) {
+	public GenericProbe(String i, ZonedDateTime t, T v) {
 		id = new String(i);
 		time = t;
-		value = v.clone();
+		setValue(v);
+	}
+
 	}
 
 	/**
@@ -56,20 +57,33 @@ public class GenericProbe implements Probe, Cloneable {
 	@Override
 	public boolean equals (Object other) {
 		if (this == other) return true;
-		if (other instanceof Probe) return equals((Probe)other);
+		if (other instanceof Probe<?>) return equals((Probe<T>)other);
 		return false;
 	}
 
 	@Override
-	public boolean equals(Probe other) {
+	public boolean equals(Probe<T> other) {
+		if (value == null && other.getValue() != null)
+			return false;
+		if (value != null && other.getValue() == null)
+			return false;
+		if (value != null) {
+			T o = other.getValue();
+				if (!value.equals(o))
+				return false;
+		}
 		return id.equals(other.getID())
-				&& time.equals(other.getTime())
-				&& value.equals(other.getValue());
+				&& time.equals(other.getTime());
 	}
 
 
-	public GenericProbe clone() {
-		return new GenericProbe(new String(id), time, value.clone());
+	public GenericProbe<T> clone() throws CloneNotSupportedException {
+		GenericProbe<T> c = (GenericProbe<T>)super.clone();
+		if (c == null) throw new CloneNotSupportedException();
+		c.id = new String(c.id);
+		if (c.value != null)
+			c.value = cloneValue(c.value);
+		return c;
 	}
 
 	public String getID() {
@@ -80,17 +94,21 @@ public class GenericProbe implements Probe, Cloneable {
 		return time;
 	}
 
-	public Probe.Messwert getValue() {
+	public T getValue() {
 		return value;
 	}
 
-	public void setValue(Probe.Messwert v) {
-		value = v;
+	public void setValue(T v) {
+		value = cloneValue(v);
 	}
 
+	protected abstract T cloneValue(T v);
+
+	/*
 	public Probe.Interpretation getInterpretation() {
 		if (value != null)
 			return value.getInterpretation();
 		return Probe.Interpretation.FUZZY;
 	}
+	*/
 }
