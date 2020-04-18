@@ -175,7 +175,7 @@ public interface ProbenAPI<T> extends Iterable<Probe<T> > {
 	 * Delete the sample that is referenced by the passed unique identifier.
 	 *
 	 * If it does not exist, undefined behavior may
-	 * occur. 
+	 * occur.
 	 * @param id The unique identifier of the sample that shall be removed from the database.
 	 */
 	void remove (String id);

@@ -139,7 +139,7 @@ public class GenericProbeTest {
 		assertFalse ( probe2 == probe );
 		assertTrue ( probe.equals(probe2));
 		assertEquals( probe, probe2 );
-		assertFalse ( probe2.getID() == probe.getID());
+		assertTrue ( probe2.getID() == probe.getID());
 		assertEquals( probe2.getID(), probe.getID());
 		assertTrue  ( probe2.getInterpretation() == probe.getInterpretation());
 		if (probe.getValue() == null)

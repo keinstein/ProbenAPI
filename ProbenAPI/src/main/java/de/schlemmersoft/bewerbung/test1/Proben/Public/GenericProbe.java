@@ -30,7 +30,7 @@ public abstract class GenericProbe<T> implements Probe<T>, Cloneable {
 	 * @param t Date/Time/Timezone of the measurement.
 	 */
 	public GenericProbe(String i, ZonedDateTime t) {
-		id = new String(i);
+		id = i;
 		time = t;
 		value = null;
 	}
@@ -43,7 +43,7 @@ public abstract class GenericProbe<T> implements Probe<T>, Cloneable {
 	 * @param v Value object conaining the measurement value of the sample.
 	 */
 	public GenericProbe(String i, ZonedDateTime t, T v) {
-		id = new String(i);
+		id = i;
 		time = t;
 		setValue(v);
 	}
@@ -54,7 +54,7 @@ public abstract class GenericProbe<T> implements Probe<T>, Cloneable {
 	 * @param sample The sample that will be copied.
 	 */
 	public GenericProbe(Probe<T> sample) {
-		id = new String(sample.getID());
+		id = sample.getID();
 		time = sample.getTime();
 		setValue (sample.getValue());
 	}
@@ -89,14 +89,13 @@ public abstract class GenericProbe<T> implements Probe<T>, Cloneable {
 	public GenericProbe<T> clone() throws CloneNotSupportedException {
 		GenericProbe<T> c = (GenericProbe<T>)super.clone();
 		if (c == null) throw new CloneNotSupportedException();
-		c.id = new String(c.id);
 		if (c.value != null)
 			c.value = cloneValue(c.value);
 		return c;
 	}
 
 	public String getID() {
-		return new String(id);
+		return id;
 	}
 
 	public ZonedDateTime getTime() {
