@@ -68,7 +68,7 @@ public class TestProbenSQL
 		@Test
 		void TestRangeIteratorEmpty() {
 			Iterator<Probe<Integer>> it =
-					data.range(new Integer(-5), new Integer(9)).iterator();
+					data.range(Integer.valueOf(-5), Integer.valueOf(9)).iterator();
 			assertFalse(it.hasNext());
 			assertThrows(NoSuchElementException.class,
 					() -> { it.next(); });
@@ -131,26 +131,26 @@ public class TestProbenSQL
 		@Test
 		void addByDateValue() {
 			ZonedDateTime time = ZonedDateTime.now();
-			SQLProbe origsample = data.add(time,new Integer(3));
+			SQLProbe origsample = data.add(time,Integer.valueOf (3));
 			SQLProbe sample = getOnlyEntry();
 			assertTrue(sample == origsample);
 			assertNotEquals("", sample.getID());
 			assertEquals(time,sample.getTime());
-			assertEquals(new Integer(3),sample.getValue());
+			assertEquals(Integer.valueOf(3),sample.getValue());
 
 			// 2nd element should be after 1st.
-			data.add(time.plusHours(1),new Integer(5));
-			data.add(time,new Integer(4));
+			data.add(time.plusHours(1),5);
+			data.add(time,Integer.valueOf(4));
 			Iterator<Probe<Integer>> it = data.iterator();
 			assertTrue(it.hasNext());
-			Integer expectedValue = new Integer(3);
+			Integer expectedValue = Integer.valueOf(3);
 			assertEquals(expectedValue,((SQLProbe)it.next()).getValue());
 			assertTrue(it.hasNext());
-			expectedValue = new Integer(4);
+			expectedValue = Integer.valueOf(4);
 			assertEquals(expectedValue,((SQLProbe)it.next()).getValue());
 			assertTrue(it.hasNext());
-			expectedValue = new Integer(5);
-			assertEquals(new Integer(5),((SQLProbe)it.next()).getValue());
+			expectedValue = Integer.valueOf(5);
+			assertEquals(Integer.valueOf(5),((SQLProbe)it.next()).getValue());
 			assertFalse(it.hasNext());
 		}
 
@@ -158,30 +158,30 @@ public class TestProbenSQL
 		void addByAll() {
 			ZonedDateTime time = ZonedDateTime.now();
 			assertNotNull(time);
-			SQLProbe origsample = data.add("Sample 2",time,new Integer(-18));
+			SQLProbe origsample = data.add("Sample 2",time,Integer.valueOf(-18));
 			assertNotNull(origsample);
 			SQLProbe sample = getOnlyEntry();
 			assertNotNull(sample);
 			assertTrue(sample == origsample);
 			assertEquals("Sample 2",sample.getID());
 			assertEquals(time,sample.getTime());
-			assertEquals(new Integer(-18),sample.getValue());
+			assertEquals(Integer.valueOf(-18),sample.getValue());
 
 			assertThrows(IllegalArgumentException.class,
-					() -> { data.add("Sample 2",time,new Integer(-18)); });
+					() -> { data.add("Sample 2",time,Integer.valueOf(-18)); });
 		}
 
 		@Test
 		void addByObject() {
 			ZonedDateTime time = ZonedDateTime.now();
-			SQLProbe original = new SQLProbe("Sample 3",time,new Integer(79));
+			SQLProbe original = new SQLProbe("Sample 3",time,Integer.valueOf(79));
 			SQLProbe inserted = data.add(original);
 			assertFalse(original == inserted);
 			SQLProbe sample = getOnlyEntry();
 			assertTrue(sample == inserted);
 			assertEquals("Sample 3",sample.getID());
 			assertEquals(time,sample.getTime());
-			assertEquals(new Integer(79),sample.getValue());
+			assertEquals(Integer.valueOf(79),sample.getValue());
 
 			assertThrows(IllegalArgumentException.class,
 					() -> { data.add(original); });
@@ -217,11 +217,11 @@ public class TestProbenSQL
 						 new TestSQLProbe((String)null, time.plusHours(2)),
 						 new TestSQLProbe((String)null, time.plusHours(7)),
 						 new TestSQLProbe("Sample 1",time.plusHours(4)),
-						 new TestSQLProbe((String)null, time,new Integer(3)),
-						 new TestSQLProbe((String)null, time.plusHours(3),new Integer(5)),
-						 new TestSQLProbe((String)null, time.plusHours(6),new Integer(4)),
-						 new TestSQLProbe("Sample 2",time.minusHours(1),new Integer(-18)),
-						 new TestSQLProbe("Sample 3",time.plusHours(5),new Integer(79))
+						 new TestSQLProbe((String)null, time,Integer.valueOf(3)),
+						 new TestSQLProbe((String)null, time.plusHours(3),Integer.valueOf(5)),
+						 new TestSQLProbe((String)null, time.plusHours(6),Integer.valueOf(4)),
+						 new TestSQLProbe("Sample 2",time.minusHours(1),Integer.valueOf(-18)),
+						 new TestSQLProbe("Sample 3",time.plusHours(5),Integer.valueOf(79))
 			        );
 				samples = sampleStream.collect(Collectors.toCollection(ArrayList::new));
 				for (TestSQLProbe sample : samples) {
@@ -264,7 +264,7 @@ public class TestProbenSQL
 
 			@Test
 			void testRangeIterator() {
-				Iterator<Probe<Integer>> it = data.range(new Integer(3),new Integer(5)).iterator();
+				Iterator<Probe<Integer>> it = data.range(Integer.valueOf(3),Integer.valueOf(5)).iterator();
 				Iterator<TestSQLProbe> it2 = samples.iterator();
 
 				// don't use hasNext on it (this execution path must be checked, too)
