@@ -127,13 +127,12 @@ public class TestProbenSQL
 					() -> { data.add("Sample 1",time); });
 		}
 
-		/*
 		@Test
-		void addByDateValue() {
+		void addByDateValue() throws SQLException {
 			ZonedDateTime time = ZonedDateTime.now();
 			SQLProbe origsample = data.add(time,Integer.valueOf (3));
 			SQLProbe sample = getOnlyEntry();
-			assertTrue(sample == origsample);
+			assertEquals(origsample, sample);
 			assertNotEquals("", sample.getID());
 			assertEquals(time,sample.getTime());
 			assertEquals(Integer.valueOf(3),sample.getValue());
@@ -155,14 +154,14 @@ public class TestProbenSQL
 		}
 
 		@Test
-		void addByAll() {
+		void addByAll() throws SQLException {
 			ZonedDateTime time = ZonedDateTime.now();
 			assertNotNull(time);
 			SQLProbe origsample = data.add("Sample 2",time,Integer.valueOf(-18));
 			assertNotNull(origsample);
 			SQLProbe sample = getOnlyEntry();
 			assertNotNull(sample);
-			assertTrue(sample == origsample);
+			assertEquals(origsample,sample);
 			assertEquals("Sample 2",sample.getID());
 			assertEquals(time,sample.getTime());
 			assertEquals(Integer.valueOf(-18),sample.getValue());
@@ -170,7 +169,7 @@ public class TestProbenSQL
 			assertThrows(IllegalArgumentException.class,
 					() -> { data.add("Sample 2",time,Integer.valueOf(-18)); });
 		}
-
+/*
 		@Test
 		void addByObject() {
 			ZonedDateTime time = ZonedDateTime.now();
