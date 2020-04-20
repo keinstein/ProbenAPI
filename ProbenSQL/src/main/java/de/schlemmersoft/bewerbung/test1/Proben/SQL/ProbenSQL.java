@@ -11,6 +11,9 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
+import org.sqlite.SQLiteErrorCode;
+import org.sqlite.SQLiteException;
+
 import de.schlemmersoft.bewerbung.test1.Proben.Public.ProbenAPI;
 import de.schlemmersoft.bewerbung.test1.Proben.Public.ProbenAPI.Probe.Interpretation;
 
@@ -59,7 +62,9 @@ public class ProbenSQL implements ProbenAPI<Integer>
 				SQLProbeGetTime.setString(1, id);
 				ResultSet res = SQLProbeGetTime.executeQuery();
 				res.next();
-				return ZonedDateTime.parse(res.getString(1));
+				ZonedDateTime retval = ZonedDateTime.parse(res.getString(1));
+				res.close();
+				return retval;
 			} catch (SQLException e){
 				// TODO: implement error handling
 				return null;
@@ -75,7 +80,11 @@ public class ProbenSQL implements ProbenAPI<Integer>
 				ResultSet res = SQLProbeGetValue.executeQuery();
 				res.next();
 				int i = res.getInt(1);
-				if (res.wasNull()) return null;
+				if (res.wasNull()) {
+					res.close();
+					return null;
+				}
+				res.close();
 				return Integer.valueOf(i);
 			} catch (SQLException e){
 				// TODO: implement error handling
@@ -113,7 +122,7 @@ public class ProbenSQL implements ProbenAPI<Integer>
 		}
 	}
 
-	class ProbenIterator implements Iterator<Probe<Integer>> {
+	public class ProbenIterator implements Iterator<Probe<Integer>> {
 		ResultSet queryResult;
 		String current;
 
@@ -127,6 +136,10 @@ public class ProbenSQL implements ProbenAPI<Integer>
 				e.printStackTrace();
 				throw new NoSuchElementException();
 			}
+		}
+
+		public void close() throws SQLException  {
+			queryResult.close();
 		}
 
 		public boolean hasNext() {
@@ -164,8 +177,15 @@ public class ProbenSQL implements ProbenAPI<Integer>
 	private PreparedStatement SQLProbeNew;
 	String tableName;
 
-	ProbenSQL (Connection c, String tablename) {
+	ProbenSQL (Connection c, String tablename) throws SQLException {
 		connection = c;
+		try {
+			statement = connection.createStatement();
+			statement.setQueryTimeout(30);  // set timeout to 30 sec.
+		} catch (SQLException e) {
+			connection = null;
+			throw e;
+		}
 		tableName = tablename;
 	}
 
@@ -180,6 +200,45 @@ public class ProbenSQL implements ProbenAPI<Integer>
 			throw e;
 		}
 		tableName = tablename;
+	}
+
+	Connection getConnection () {
+		return connection;
+	}
+
+	void close() throws SQLException {
+		if (statement != null) {
+			statement.close();
+			statement = null;
+		}
+		if (SQLProbeGetId != null) {
+			SQLProbeGetId.close();
+			SQLProbeGetId = null;
+		}
+		if (SQLProbeGetTime != null) {
+			SQLProbeGetTime.close();
+			SQLProbeGetTime = null;
+		}
+		if (SQLProbeGetValue != null) {
+			SQLProbeGetValue.close();
+			SQLProbeGetValue = null;
+		}
+		if (SQLProbeGetAllIds != null) {
+			SQLProbeGetAllIds.close();
+			SQLProbeGetAllIds = null;
+		}
+		if (SQLProbeSetValue != null) {
+			SQLProbeSetValue.close();
+			SQLProbeSetValue = null;
+		}
+		if (SQLProbeNew != null) {
+			SQLProbeNew.close();
+			SQLProbeNew = null;
+		}
+		if (connection != null) {
+			connection.close();
+			connection = null;
+		}
 	}
 
 	void clearTable() throws SQLException {
@@ -226,7 +285,7 @@ public class ProbenSQL implements ProbenAPI<Integer>
 			if (SQLProbeGetId == null)
 					SQLProbeGetId = connection.prepareStatement("SELECT count(*) FROM " + tableName + " WHERE id = ? ORDER BY time");
 			String id;
-			ResultSet res;
+			ResultSet res = null;
 			do {
 				UUID uuid = UUID.randomUUID();
 				id = uuid.toString();
@@ -234,6 +293,8 @@ public class ProbenSQL implements ProbenAPI<Integer>
 				res = SQLProbeGetId.executeQuery();
 				res.next();
 			} while (res.getInt(1) > 0);
+			if (res != null)
+				res.close();
 			return add(id,time);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

@@ -10,11 +10,13 @@ import java.sql.Statement;
 import java.time.ZonedDateTime;
 import java.util.Iterator;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import de.schlemmersoft.bewerbung.test1.Proben.Public.ProbenAPI.Probe;
+import de.schlemmersoft.bewerbung.test1.Proben.SQL.ProbenSQL.ProbenIterator;
 import de.schlemmersoft.bewerbung.test1.Proben.SQL.ProbenSQL.SQLProbe;
 
 /**
@@ -27,6 +29,8 @@ public class TestProbenSQL
 	@Test
 	void TestInstantiateWithNew() throws SQLException {
 		data = new ProbenSQL("jdbc:sqlite::memory:","testProbenSQL");
+		data.close();
+		data = null;
 	}
 
 	@Nested
@@ -37,11 +41,18 @@ public class TestProbenSQL
 			data.clearTable();
 		}
 
-		SQLProbe getOnlyEntry () {
-			Iterator<Probe<Integer>> it =  data.iterator();
+		@AfterEach
+		void closeSQL() throws SQLException {
+			data.close();
+			data = null;
+		}
+
+		SQLProbe getOnlyEntry () throws SQLException {
+			ProbenIterator it =  (ProbenIterator) data.iterator();
 			assertTrue(it.hasNext());
 			SQLProbe retval = (SQLProbe) it.next();
 			assertFalse(it.hasNext());
+			it.close();
 			return retval;
 		}
 
@@ -73,7 +84,7 @@ public class TestProbenSQL
 		}
 */
 		@Test
-		void addByDate() {
+		void addByDate() throws SQLException {
 			assertNotNull(data);
 			ZonedDateTime time = ZonedDateTime.now();
 			assertNotNull(time);
@@ -89,7 +100,7 @@ public class TestProbenSQL
 			data.add(time.plusHours(1));
 			data.add(time);
 
-			Iterator<Probe<Integer>> it = data.iterator();
+			ProbenIterator it = (ProbenIterator) data.iterator();
 			assertTrue(it.hasNext());
 			assertEquals(time.minusHours(1),((SQLProbe)it.next()).getTime());
 			assertTrue(it.hasNext());
@@ -99,6 +110,7 @@ public class TestProbenSQL
 			assertTrue(it.hasNext());
 			assertEquals(time.plusHours(1),((SQLProbe)it.next()).getTime());
 			assertFalse(it.hasNext());
+			it.close();
 		}
 /*
 		@Test
