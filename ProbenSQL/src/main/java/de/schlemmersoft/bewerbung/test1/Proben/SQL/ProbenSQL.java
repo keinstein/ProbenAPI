@@ -332,6 +332,19 @@ public class ProbenSQL implements ProbenAPI<Integer>
 		}
 	}
 
+	public SQLProbe add (String id, ZonedDateTime time, Integer value){
+		SQLProbe sample = add(id,time);
+		if (value != null)
+			sample.setValue(value);
+		return sample;
+	}
+
+	public SQLProbe add (ZonedDateTime time, Integer value){
+		SQLProbe sample = add(time);
+		sample.setValue(value);
+		return sample;
+	}
+
 	@Override
 	public void remove(String id) {
 		// TODO Auto-generated method stub
