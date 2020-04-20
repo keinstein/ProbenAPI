@@ -26,14 +26,14 @@ public class TestProbenSQL
 
 	@Test
 	void TestInstantiateWithNew() throws SQLException {
-		data = new ProbenSQL("jdbc:sqlite:sample.db","testProbenSQL");
+		data = new ProbenSQL("jdbc:sqlite::memory:","testProbenSQL");
 	}
 
 	@Nested
 	public class WhenNew {
 		@BeforeEach
 		void createNewSQL() throws SQLException {
-			data = new ProbenSQL("jdbc:sqlite:sample.db","testProbenSQL");
+			data = new ProbenSQL("jdbc:sqlite::memory:","testProbenSQL");
 			data.clearTable();
 		}
 
