@@ -112,13 +112,13 @@ public class TestProbenSQL
 			assertFalse(it.hasNext());
 			it.close();
 		}
-/*
+
 		@Test
-		void addByIdDate() {
+		void addByIdDate() throws SQLException {
 			ZonedDateTime time = ZonedDateTime.now();
 			SQLProbe origsample = data.add("Sample 1",time);
 			SQLProbe sample = getOnlyEntry();
-			assertTrue(sample == origsample);
+			assertEquals(origsample,sample);
 			assertEquals("Sample 1",sample.getID());
 			assertEquals(time,sample.getTime());
 			assertNull(sample.getValue());
@@ -127,6 +127,7 @@ public class TestProbenSQL
 					() -> { data.add("Sample 1",time); });
 		}
 
+		/*
 		@Test
 		void addByDateValue() {
 			ZonedDateTime time = ZonedDateTime.now();

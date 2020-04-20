@@ -243,7 +243,7 @@ public class ProbenSQL implements ProbenAPI<Integer>
 
 	void clearTable() throws SQLException {
 		statement.executeUpdate("DROP TABLE IF EXISTS "+ tableName);
-        statement.executeUpdate("CREATE TABLE " + tableName + "(id STRING, time STRING, value INTEGER)");
+        statement.executeUpdate("CREATE TABLE " + tableName + "(id STRING not null primary key, time STRING not null, value INTEGER)");
 	}
 
 	@Override
@@ -314,8 +314,17 @@ public class ProbenSQL implements ProbenAPI<Integer>
 				return new SQLProbe(id);
 			else
 				return null;
-		} catch (SQLException e) {
+		} catch (SQLiteException e) {
 			// TODO Auto-generated catch block
+
+			switch (e.getResultCode()) {
+			case SQLITE_CONSTRAINT:
+				throw new IllegalArgumentException();
+			default:
+				e.printStackTrace();
+				return null;
+			}
+		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
 		}
