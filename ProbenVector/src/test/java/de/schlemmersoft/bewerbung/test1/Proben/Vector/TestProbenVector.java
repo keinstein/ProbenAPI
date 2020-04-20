@@ -18,8 +18,6 @@ import org.junit.jupiter.api.RepetitionInfo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.junit.jupiter.params.provider.ValueSource;
-
 import de.schlemmersoft.bewerbung.test1.Proben.Public.GenericProbe;
 import de.schlemmersoft.bewerbung.test1.Proben.Public.ProbenAPI.Probe;
 import de.schlemmersoft.bewerbung.test1.Proben.Public.ProbenAPI.Probe.Interpretation;
@@ -29,55 +27,22 @@ import de.schlemmersoft.bewerbung.test1.Proben.Public.ProbenAPI.Probe.Interpreta
  */
 public class TestProbenVector
 {
-	static class MyInteger implements Comparable<MyInteger> {
-		int value;
-		MyInteger(int i) {
-			value = i;
-		}
-		static MyInteger valueOf(int i) {
-			return new MyInteger(i);
-		}
-		public int intValue() {
-			return value;
-		}
-
-		public boolean equals(Object other) {
-			if (!(other instanceof MyInteger))
-				return false;
-			MyInteger tmp = (MyInteger)other;
-			return value == tmp.value;
-		}
-		public boolean equals(int other) {
-			return value == other;
-		}
-		public boolean equals(MyInteger other) {
-			return value == other.intValue();
-		}
-		public String toString() {
-			return Integer.valueOf(value).toString();
-		}
-		@Override
-		public int compareTo(MyInteger arg0) {
-			return Integer.valueOf(value).compareTo(Integer.valueOf(arg0.value));
-		}
-	}
-
-	class IntProbe extends GenericProbe <MyInteger>{
+	class IntProbe extends GenericProbe <Integer>{
 
 		public IntProbe(String i, ZonedDateTime t) {
 			super(i, t);
 		}
 
 		public IntProbe(String i, ZonedDateTime t, int v) {
-			super(i, t, MyInteger.valueOf(v));
+			super(i, t, Integer.valueOf(v));
 		}
 
 		public IntProbe(IntProbe probe) {
 			super(probe);
 		}
 
-		public IntProbe(String string, ZonedDateTime now, MyInteger myInteger) {
-			super(string, now, myInteger);
+		public IntProbe(String string, ZonedDateTime now, Integer Integer) {
+			super(string, now, Integer);
 		}
 
 		@Override
@@ -92,15 +57,15 @@ public class TestProbenVector
 			case 1:
 				return Interpretation.GOOD;
 			}
-			// TODO Auto-generated method stub
+			// dead code
 			return null;
 		}
 
 		@Override
-		protected MyInteger cloneValue(MyInteger v) {
+		protected Integer cloneValue(Integer v) {
 			if (v == null) return null;
 			int tmp = v.intValue();
-			return MyInteger.valueOf(tmp);
+			return Integer.valueOf(tmp);
 		}
 
 		@Override
@@ -123,10 +88,10 @@ public class TestProbenVector
 			return buf.toString();
 		}
 	}
-	class IntProbenVector extends ProbenVector<MyInteger, IntProbe> {
+	class IntProbenVector extends ProbenVector<Integer, IntProbe> {
 
 		@Override
-		protected IntProbe createElement(String id, ZonedDateTime time, MyInteger value) {
+		protected IntProbe createElement(String id, ZonedDateTime time, Integer value) {
 			if (value == null)
 				return new IntProbe(id,time);
 			return new IntProbe(id,time,value.intValue());
@@ -142,7 +107,7 @@ public class TestProbenVector
 	IntProbenVector data;
 
 	IntProbe getOnlyEntry () {
-		Iterator<Probe<MyInteger>> it =  data.iterator();
+		Iterator<Probe<Integer>> it =  data.iterator();
 		assertTrue(it.hasNext());
 		IntProbe retval = (IntProbe) it.next();
 		assertFalse(it.hasNext());
@@ -163,7 +128,7 @@ public class TestProbenVector
 
 		@Test
 		void TestIteratorEmpty() {
-			Iterator<Probe<MyInteger>> it =  data.iterator();
+			Iterator<Probe<Integer>> it =  data.iterator();
 			assertFalse(it.hasNext());
 			assertThrows(NoSuchElementException.class,
 					() -> { it.next(); });
@@ -171,8 +136,8 @@ public class TestProbenVector
 
 		@Test
 		void TestRangeIteratorEmpty() {
-			Iterator<Probe<MyInteger>> it =
-					data.range(new MyInteger(-5), new MyInteger(9)).iterator();
+			Iterator<Probe<Integer>> it =
+					data.range(Integer.valueOf(-5), Integer.valueOf(9)).iterator();
 			assertFalse(it.hasNext());
 			assertThrows(NoSuchElementException.class,
 					() -> { it.next(); });
@@ -181,7 +146,7 @@ public class TestProbenVector
 		@ParameterizedTest(name="Run {index}: testId={0}")
 		@EnumSource(Interpretation.class)
 		void TestResultIteratorEmpty(Interpretation i) {
-		    Iterator<Probe<MyInteger>> it = data.result(i).iterator();
+		    Iterator<Probe<Integer>> it = data.result(i).iterator();
 			assertFalse(it.hasNext());
 			assertThrows(NoSuchElementException.class,
 					() -> { it.next(); });
@@ -204,7 +169,7 @@ public class TestProbenVector
 			data.add(time.plusHours(1));
 			data.add(time);
 
-			Iterator<Probe<MyInteger>> it = data.iterator();
+			Iterator<Probe<Integer>> it = data.iterator();
 			assertTrue(it.hasNext());
 			assertEquals(time.minusHours(1),((IntProbe)it.next()).getTime());
 			assertTrue(it.hasNext());
@@ -233,26 +198,26 @@ public class TestProbenVector
 		@Test
 		void addByDateValue() {
 			ZonedDateTime time = ZonedDateTime.now();
-			IntProbe origsample = data.add(time,new MyInteger(3));
+			IntProbe origsample = data.add(time,Integer.valueOf(3));
 			IntProbe sample = getOnlyEntry();
 			assertTrue(sample == origsample);
 			assertNotEquals("", sample.getID());
 			assertEquals(time,sample.getTime());
-			assertEquals(new MyInteger(3),sample.getValue());
+			assertEquals(Integer.valueOf(3),sample.getValue());
 
 			// 2nd element should be after 1st.
-			data.add(time.plusHours(1),new MyInteger(5));
-			data.add(time,new MyInteger(4));
-			Iterator<Probe<MyInteger>> it = data.iterator();
+			data.add(time.plusHours(1),Integer.valueOf(5));
+			data.add(time,Integer.valueOf(4));
+			Iterator<Probe<Integer>> it = data.iterator();
 			assertTrue(it.hasNext());
-			MyInteger expectedValue = new MyInteger(3);
+			Integer expectedValue = Integer.valueOf(3);
 			assertEquals(expectedValue,((IntProbe)it.next()).getValue());
 			assertTrue(it.hasNext());
-			expectedValue = new MyInteger(4);
+			expectedValue = Integer.valueOf(4);
 			assertEquals(expectedValue,((IntProbe)it.next()).getValue());
 			assertTrue(it.hasNext());
-			expectedValue = new MyInteger(5);
-			assertEquals(new MyInteger(5),((IntProbe)it.next()).getValue());
+			expectedValue = Integer.valueOf(5);
+			assertEquals(Integer.valueOf(5),((IntProbe)it.next()).getValue());
 			assertFalse(it.hasNext());
 		}
 
@@ -260,30 +225,30 @@ public class TestProbenVector
 		void addByAll() {
 			ZonedDateTime time = ZonedDateTime.now();
 			assertNotNull(time);
-			IntProbe origsample = data.add("Sample 2",time,new MyInteger(-18));
+			IntProbe origsample = data.add("Sample 2",time,Integer.valueOf(-18));
 			assertNotNull(origsample);
 			IntProbe sample = getOnlyEntry();
 			assertNotNull(sample);
 			assertTrue(sample == origsample);
 			assertEquals("Sample 2",sample.getID());
 			assertEquals(time,sample.getTime());
-			assertEquals(new MyInteger(-18),sample.getValue());
+			assertEquals(Integer.valueOf(-18),sample.getValue());
 
 			assertThrows(IllegalArgumentException.class,
-					() -> { data.add("Sample 2",time,new MyInteger(-18)); });
+					() -> { data.add("Sample 2",time,Integer.valueOf(-18)); });
 		}
 
 		@Test
 		void addByObject() {
 			ZonedDateTime time = ZonedDateTime.now();
-			IntProbe original = new IntProbe("Sample 3",time,new MyInteger(79));
+			IntProbe original = new IntProbe("Sample 3",time,Integer.valueOf(79));
 			IntProbe inserted = data.add(original);
 			assertFalse(original == inserted);
 			IntProbe sample = getOnlyEntry();
 			assertTrue(sample == inserted);
 			assertEquals("Sample 3",sample.getID());
 			assertEquals(time,sample.getTime());
-			assertEquals(new MyInteger(79),sample.getValue());
+			assertEquals(Integer.valueOf(79),sample.getValue());
 
 			assertThrows(IllegalArgumentException.class,
 					() -> { data.add(original); });
@@ -294,9 +259,9 @@ public class TestProbenVector
 			class TestIntProbe {
 				public String id;
 				public ZonedDateTime time;
-				public MyInteger value;
+				public Integer value;
 
-				TestIntProbe(String s, ZonedDateTime t, MyInteger v) {
+				TestIntProbe(String s, ZonedDateTime t, Integer v) {
 					id = s;
 					time = t;
 					value = v;
@@ -319,11 +284,11 @@ public class TestProbenVector
 						 new TestIntProbe((String)null, time.plusHours(2)),
 						 new TestIntProbe((String)null, time.plusHours(7)),
 						 new TestIntProbe("Sample 1",time.plusHours(4)),
-						 new TestIntProbe((String)null, time,new MyInteger(3)),
-						 new TestIntProbe((String)null, time.plusHours(3),new MyInteger(5)),
-						 new TestIntProbe((String)null, time.plusHours(6),new MyInteger(4)),
-						 new TestIntProbe("Sample 2",time.minusHours(1),new MyInteger(-18)),
-						 new TestIntProbe("Sample 3",time.plusHours(5),new MyInteger(79))
+						 new TestIntProbe((String)null, time,Integer.valueOf(3)),
+						 new TestIntProbe((String)null, time.plusHours(3),Integer.valueOf(5)),
+						 new TestIntProbe((String)null, time.plusHours(6),Integer.valueOf(4)),
+						 new TestIntProbe("Sample 2",time.minusHours(1),Integer.valueOf(-18)),
+						 new TestIntProbe("Sample 3",time.plusHours(5),Integer.valueOf(79))
 			        );
 				samples = sampleStream.collect(Collectors.toCollection(ArrayList::new));
 				for (TestIntProbe sample : samples) {
@@ -347,12 +312,12 @@ public class TestProbenVector
 
 			@Test
 			void orderedIterator() {
-				Iterator<Probe<MyInteger>> it = data.iterator();
+				Iterator<Probe<Integer>> it = data.iterator();
 				Iterator<TestIntProbe> it2 = samples.iterator();
 
 				// don't use hasNext on it (this execution path must be checked, too)
 				while(it2.hasNext()) {
-					Probe<MyInteger> sample1 = it.next();
+					Probe<Integer> sample1 = it.next();
 					TestIntProbe sample2 = it2.next();
 					if (sample2.id != null) {
 						assertEquals(sample1.getID(),sample2.id);
@@ -366,16 +331,16 @@ public class TestProbenVector
 
 			@Test
 			void testRangeIterator() {
-				Iterator<Probe<MyInteger>> it = data.range(new MyInteger(3),new MyInteger(5)).iterator();
+				Iterator<Probe<Integer>> it = data.range(Integer.valueOf(3),Integer.valueOf(5)).iterator();
 				Iterator<TestIntProbe> it2 = samples.iterator();
 
 				// don't use hasNext on it (this execution path must be checked, too)
 				while(it2.hasNext()) {
 					TestIntProbe sample2 = it2.next();
 					if (sample2.value == null) continue;
-					if (sample2.value.value < 3 || sample2.value.value > 5)
+					if (sample2.value.intValue() < 3 || sample2.value.intValue() > 5)
 						continue;
-					Probe<MyInteger> sample1 = it.next();
+					Probe<Integer> sample1 = it.next();
 					assertEquals(sample2.value,sample1.getValue());
 					assertEquals(sample2.time,sample1.getTime());
 					if (sample2.id != null) {
@@ -389,7 +354,7 @@ public class TestProbenVector
 			@ParameterizedTest(name="Run {index}: testId={0}")
 			@EnumSource(Interpretation.class)
 			void testInterpretationIterator(Interpretation interpretation) {
-				Iterator<Probe<MyInteger>> it = data.result(interpretation).iterator();
+				Iterator<Probe<Integer>> it = data.result(interpretation).iterator();
 				Iterator<TestIntProbe> it2 = samples.iterator();
 
 				// don't use hasNext on it (this execution path must be checked, too)
@@ -400,16 +365,16 @@ public class TestProbenVector
 					if (sample2.value != null)
 						switch (interpretation) {
 						case GOOD:
-							if (sample2.value.value <= 0) continue;
+							if (sample2.value.intValue() <= 0) continue;
 							break;
 						case BAD:
-							if (sample2.value.value >= 0) continue;
+							if (sample2.value.intValue() >= 0) continue;
 							break;
 						case FUZZY:
-							if (sample2.value.value != 0) continue;
+							if (sample2.value.intValue() != 0) continue;
 							break;
 						}
-					Probe<MyInteger> sample1 = it.next();
+					Probe<Integer> sample1 = it.next();
 					assertEquals(sample2.value,sample1.getValue());
 					assertEquals(sample2.time,sample1.getTime());
 					if (sample2.id != null) {
@@ -440,8 +405,8 @@ public class TestProbenVector
 				data.remove(current.id);
 				assertEquals(oldsize-1, data.size());
 
-				Iterator<Probe<MyInteger>> it = data.iterator();
-				Probe<MyInteger> sample1;
+				Iterator<Probe<Integer>> it = data.iterator();
+				Probe<Integer> sample1;
 
 				for (int i = 0 ; i != samples.size(); ++i) {
 					System.out.printf("#%d/%d: \n",i,repetitionInfo.getCurrentRepetition());
@@ -467,8 +432,8 @@ public class TestProbenVector
 				System.out.println(repetitionInfo.getCurrentRepetition());
 
 				assertTrue(data.size() >= 10);
-				Probe<MyInteger> sample = null;
-				Iterator<Probe<MyInteger>> it = data.iterator();
+				Probe<Integer> sample = null;
+				Iterator<Probe<Integer>> it = data.iterator();
 				for (int i = repetitionInfo.getCurrentRepetition(); i > 0; --i) {
 					sample = it.next();
 				}
@@ -494,7 +459,7 @@ public class TestProbenVector
 						assertEquals(current.id,sample.getID());
 					}
 				}
-				Iterator<Probe<MyInteger>> it2 = it;
+				Iterator<Probe<Integer>> it2 = it;
 				assertThrows(NoSuchElementException.class,
 						() -> { it2.next(); });
 			}
