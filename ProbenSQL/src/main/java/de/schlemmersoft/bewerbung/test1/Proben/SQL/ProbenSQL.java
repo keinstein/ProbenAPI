@@ -95,12 +95,14 @@ public class ProbenSQL implements ProbenAPI<Integer>
 
 		@Override
 		public void setValue(Integer v) {
+			if (v == null)
+				throw new IllegalArgumentException();
 			try {
 				if (SQLProbeSetValue == null)
 					SQLProbeSetValue = connection.prepareStatement("UPDATE " + tableName + " SET value = ? WHERE id = ?");
-				SQLProbeSetValue.setInt(0, v.intValue());
-				SQLProbeSetValue.setString(1, id);
-				SQLProbeGetValue.executeUpdate();
+				SQLProbeSetValue.setInt(1, v.intValue());
+				SQLProbeSetValue.setString(2, id);
+				SQLProbeSetValue.executeUpdate();
 			} catch (SQLException e){
 				// TODO: implement error handling
 			}
