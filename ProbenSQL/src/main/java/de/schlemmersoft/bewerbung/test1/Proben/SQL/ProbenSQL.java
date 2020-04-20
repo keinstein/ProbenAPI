@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLWarning;
 import java.sql.Statement;
 import java.time.ZonedDateTime;
 import java.util.Iterator;
@@ -169,6 +170,69 @@ public class ProbenSQL implements ProbenAPI<Integer>
 		}
 	}
 
+	class Range implements Iterable<Probe<Integer>> {
+		Integer minimum;
+		Integer maximum;
+		Range(Integer min, Integer max) {
+			minimum = min;
+			maximum = max;
+		}
+
+		@Override
+		public Iterator<Probe<Integer>> iterator() {
+			try {
+				System.out.print("SELECT id FROM "
+											+ tableName
+											+ " WHERE value => ? and value <= ? ORDER BY time");
+				System.out.printf(" with values %d and %d\n",minimum.intValue(),maximum.intValue());
+				if (SQLProbeGetRangeIds == null)
+					SQLProbeGetRangeIds =
+					  connection.prepareStatement("SELECT id FROM "
+					+ tableName
+					+ " WHERE value >= ? and value <= ? ORDER BY time");
+				SQLProbeGetRangeIds.setInt(1, minimum.intValue());
+				SQLProbeGetRangeIds.setInt(2, maximum.intValue());
+				ResultSet res = SQLProbeGetRangeIds.executeQuery();
+				SQLWarning warn = SQLProbeGetRangeIds.getWarnings();
+				while (warn != null) {
+					System.out.println(warn.getMessage());
+					warn = warn.getNextWarning();
+				}
+				return new ProbenIterator(res);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
+		}
+
+	}
+
+	class FuzzyResult implements Iterable<Probe<Integer>> {
+
+		@Override
+		public Iterator<Probe<Integer>> iterator() {
+			try {
+				if (SQLProbeGetFuzzyResultIds == null)
+					SQLProbeGetFuzzyResultIds =
+					  connection.prepareStatement("SELECT id FROM "
+					+ tableName
+					+ " WHERE value IS NULL OR value == 0 ORDER BY time");
+				ResultSet res = SQLProbeGetFuzzyResultIds.executeQuery();
+				SQLWarning warn = SQLProbeGetFuzzyResultIds.getWarnings();
+				while (warn != null) {
+					System.err.println(warn.getMessage());
+					warn = warn.getNextWarning();
+				}
+				return new ProbenIterator(res);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
+		}
+	}
+
 	private Connection connection;
 	private Statement statement;
 	private PreparedStatement SQLProbeGetId;
@@ -176,6 +240,8 @@ public class ProbenSQL implements ProbenAPI<Integer>
 	private PreparedStatement SQLProbeGetValue;
 	private PreparedStatement SQLProbeSetValue;
 	private PreparedStatement SQLProbeGetAllIds;
+	private PreparedStatement SQLProbeGetRangeIds;
+	private PreparedStatement SQLProbeGetFuzzyResultIds;
 	private PreparedStatement SQLProbeNew;
 	String tableName;
 
@@ -265,13 +331,20 @@ public class ProbenSQL implements ProbenAPI<Integer>
 
 	@Override
 	public Iterable<Probe<Integer>> range(Integer min, Integer max) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Range(min,max);
 	}
 
 	@Override
 	public Iterable<Probe<Integer>> result(Interpretation key) {
-		// TODO Auto-generated method stub
+		switch (key) {
+		case GOOD:
+			return new Range(Integer.valueOf(1),Integer.valueOf(Integer.MAX_VALUE));
+		case FUZZY:
+			return new FuzzyResult();
+		case BAD:
+			return new Range(Integer.MIN_VALUE, -1);
+		}
+		// dead code
 		return null;
 	}
 

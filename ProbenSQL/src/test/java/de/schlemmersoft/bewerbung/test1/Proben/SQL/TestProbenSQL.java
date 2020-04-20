@@ -8,14 +8,23 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import de.schlemmersoft.bewerbung.test1.Proben.Public.ProbenAPI.Probe;
+import de.schlemmersoft.bewerbung.test1.Proben.Public.ProbenAPI.Probe.Interpretation;
 import de.schlemmersoft.bewerbung.test1.Proben.SQL.ProbenSQL.ProbenIterator;
 import de.schlemmersoft.bewerbung.test1.Proben.SQL.ProbenSQL.SQLProbe;
 
@@ -56,7 +65,6 @@ public class TestProbenSQL
 			return retval;
 		}
 
-/*
 		@Test
 		void TestIteratorEmpty() {
 			Iterator<Probe<Integer>> it =  data.iterator();
@@ -74,6 +82,7 @@ public class TestProbenSQL
 					() -> { it.next(); });
 		}
 
+		/*
 		@ParameterizedTest(name="Run {index}: testId={0}")
 		@EnumSource(Interpretation.class)
 		void TestResultIteratorEmpty(Interpretation i) {
@@ -82,7 +91,7 @@ public class TestProbenSQL
 			assertThrows(NoSuchElementException.class,
 					() -> { it.next(); });
 		}
-*/
+		 */
 		@Test
 		void addByDate() throws SQLException {
 			assertNotNull(data);
@@ -169,7 +178,8 @@ public class TestProbenSQL
 			assertThrows(IllegalArgumentException.class,
 					() -> { data.add("Sample 2",time,Integer.valueOf(-18)); });
 		}
-/*
+
+		/* We omit this test as every Object already represents a row in the database table.
 		@Test
 		void addByObject() {
 			ZonedDateTime time = ZonedDateTime.now();
@@ -185,6 +195,7 @@ public class TestProbenSQL
 			assertThrows(IllegalArgumentException.class,
 					() -> { data.add(original); });
 		}
+		 */
 
 		@Nested
 		class WhenAdd {
@@ -230,9 +241,7 @@ public class TestProbenSQL
 						else
 							data.add(sample.time,sample.value);
 					} else {
-						if (sample.id.equals("Sample 3"))
-							data.add(new SQLProbe(sample.id,sample.time,sample.value));
-						else if (sample.value == null)
+						if (sample.value == null)
 							data.add(sample.id,sample.time);
 						else
 							data.add(sample.id,sample.time,sample.value);
@@ -270,7 +279,7 @@ public class TestProbenSQL
 				while(it2.hasNext()) {
 					TestSQLProbe sample2 = it2.next();
 					if (sample2.value == null) continue;
-					if (sample2.value.value < 3 || sample2.value.value > 5)
+					if (sample2.value.intValue() < 3 || sample2.value.intValue() > 5)
 						continue;
 					Probe<Integer> sample1 = it.next();
 					assertEquals(sample2.value,sample1.getValue());
@@ -297,13 +306,13 @@ public class TestProbenSQL
 					if (sample2.value != null)
 						switch (interpretation) {
 						case GOOD:
-							if (sample2.value.value <= 0) continue;
+							if (sample2.value.intValue() <= 0) continue;
 							break;
 						case BAD:
-							if (sample2.value.value >= 0) continue;
+							if (sample2.value.intValue() >= 0) continue;
 							break;
 						case FUZZY:
-							if (sample2.value.value != 0) continue;
+							if (sample2.value.intValue() != 0) continue;
 							break;
 						}
 					Probe<Integer> sample1 = it.next();
@@ -317,7 +326,7 @@ public class TestProbenSQL
 						() -> { it.next(); });
 			}
 
-
+/*
 			@Test
 			void testRemoveNonexistingId() {
 				assertThrows(NoSuchElementException.class,
@@ -395,8 +404,8 @@ public class TestProbenSQL
 				assertThrows(NoSuchElementException.class,
 						() -> { it2.next(); });
 			}
-		}
 */
+		}
 
 	}
 
