@@ -4,12 +4,14 @@ import java.io.PrintStream;
 import java.sql.SQLException;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import de.schlemmersoft.bewerbung.test1.Proben.Public.GenericProbe;
 import de.schlemmersoft.bewerbung.test1.Proben.Public.ProbenAPI;
+import de.schlemmersoft.bewerbung.test1.Proben.Public.ProbenAPI.Probe;
 import de.schlemmersoft.bewerbung.test1.Proben.Public.ProbenAPI.Probe.Interpretation;
 import de.schlemmersoft.bewerbung.test1.Proben.SQL.ProbenSQL;
 import de.schlemmersoft.bewerbung.test1.Proben.Test.ConsoleApp.SyntaxError;
@@ -228,7 +230,7 @@ public final class ConsoleApp {
 
 		@Override
 		public void print(PrintStream stream) {
-			stream.printf("Got: add %s %s %s\n",
+			stream.printf("added %s %s %s\n",
 					id == null ? "<null>" : id,
 					time == null ? "<null>" : time.toString(),
 					value == null ? "<null>" : value.toString());
@@ -254,6 +256,20 @@ public final class ConsoleApp {
 				value = Integer.valueOf(sc.nextInt());
 			}
 			print(System.out);
+			return true;
+		}
+
+		@Override
+		boolean execute() {
+			if (time == null)
+				return true;
+			Probe<Integer> sample = null;
+			if (id == null)
+				sample  = api.add(time);
+			else
+				sample = api.add(id,time);
+			if (value != null)
+				sample.setValue(value);
 			return true;
 		}
 	}
@@ -350,6 +366,22 @@ public final class ConsoleApp {
 			print(System.out);
 			return true;
 		}
+
+		@Override
+		boolean execute() {
+			Iterator<Probe<Integer>> it = api.iterator();
+			Probe<Integer> sample;
+			while (it.hasNext()) {
+				sample = it.next();
+				Integer value = sample.getValue();
+				System.out.printf("%-36s\t%s\t%s\n",
+								  sample.getID(),
+								  sample.getTime(),
+								  value == null? "":value);
+			}
+			return true;
+		}
+
 	}
 
 	static class rangeCommand extends Command {
@@ -421,14 +453,16 @@ public final class ConsoleApp {
 		}
 	}
 
-	static Map<String,Command> commands = Map.of("add",      new addCommand(),
-											     "addvalue", new addvalueCommand(),
-												 "remove",   new removeCommand(),
-												 "list",     new listCommand(),
-												 "range",    new rangeCommand(),
-												 "result",   new resultCommand(),
-												 "help",     new helpCommand(),
-												 "#",		 new commentCommand());
+	static Map<String,Command> commands = Map.of(
+			"quit",	 new quitCommand(),
+			"add",	  new addCommand(),
+			"addvalue", new addvalueCommand(),
+			"remove",   new removeCommand(),
+			"list",	 new listCommand(),
+			"range",	new rangeCommand(),
+			"result",   new resultCommand(),
+			"help",	 new helpCommand(),
+			"#",		new commentCommand());
 
 	public static void mainProgram(String[] args) throws SQLException, SyntaxError {
 		if (args != null && args.length < 2)
