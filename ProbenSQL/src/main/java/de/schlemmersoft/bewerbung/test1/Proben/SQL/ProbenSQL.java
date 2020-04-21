@@ -243,6 +243,8 @@ public class ProbenSQL implements ProbenAPI<Integer>
 	private PreparedStatement SQLGetRangeIds;
 	private PreparedStatement SQLGetFuzzyResultIds;
 	private PreparedStatement SQLProbeNew;
+	private PreparedStatement SQLProbeRemove;
+	private PreparedStatement SQLProbeRemoveDate;
 	String tableName;
 
 	ProbenSQL (Connection c, String tablename) throws SQLException {
@@ -257,7 +259,7 @@ public class ProbenSQL implements ProbenAPI<Integer>
 		tableName = tablename;
 	}
 
-	ProbenSQL (String uri, String tablename) throws SQLException {
+	public ProbenSQL (String uri, String tablename) throws SQLException {
 		 // create a database connection
 		connection = DriverManager.getConnection("jdbc:sqlite:sample.db");
 		try {
@@ -312,6 +314,14 @@ public class ProbenSQL implements ProbenAPI<Integer>
 	void clearTable() throws SQLException {
 		statement.executeUpdate("DROP TABLE IF EXISTS "+ tableName);
         statement.executeUpdate("CREATE TABLE " + tableName + "(id STRING not null primary key, time STRING not null, value INTEGER)");
+	}
+
+	int size() throws SQLException {
+		ResultSet res = statement.executeQuery("SELECT count(*) from " + tableName);
+		res.next();
+		int retval = res.getInt(1);
+		res.close();
+		return retval;
 	}
 
 	@Override
@@ -414,14 +424,33 @@ public class ProbenSQL implements ProbenAPI<Integer>
 
 	@Override
 	public void remove(String id) {
-		// TODO Auto-generated method stub
+		try {
+			if (SQLProbeRemove == null)
+				SQLProbeRemove = connection.prepareStatement("DELETE from " + tableName + " WHERE id = ?");
+			SQLProbeRemove.setString(1,id);
+			if (SQLProbeRemove.executeUpdate() == 0)
+				throw new NoSuchElementException();
 
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void remove(Probe<Integer> sample) {
-		// TODO Auto-generated method stub
+		try {
+			if (SQLProbeRemoveDate == null)
+				SQLProbeRemoveDate = connection.prepareStatement("DELETE from " + tableName + " WHERE id = ? AND time = ?");
+			SQLProbeRemoveDate.setString(1, sample.getID());
+			SQLProbeRemoveDate.setString(2, sample.getTime().toString());
+			if (SQLProbeRemoveDate.executeUpdate() == 0)
+				throw new NoSuchElementException();
 
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 

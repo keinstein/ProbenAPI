@@ -19,6 +19,8 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.RepetitionInfo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -326,7 +328,7 @@ public class TestProbenSQL
 						() -> { it.next(); });
 			}
 
-/*
+
 			@Test
 			void testRemoveNonexistingId() {
 				assertThrows(NoSuchElementException.class,
@@ -334,7 +336,7 @@ public class TestProbenSQL
 			}
 
 			@RepeatedTest(10)
-			void testDeleteById (RepetitionInfo repetitionInfo ) {
+			void testDeleteById (RepetitionInfo repetitionInfo ) throws SQLException {
 				System.out.print("Current rep. ");
 				System.out.println(repetitionInfo.getCurrentRepetition());
 				TestSQLProbe current = samples.get(repetitionInfo.getCurrentRepetition()-1);
@@ -366,7 +368,7 @@ public class TestProbenSQL
 			}
 
 			@RepeatedTest(10)
-			void testDeleteByObject (RepetitionInfo repetitionInfo ) {
+			void testDeleteByObject (RepetitionInfo repetitionInfo ) throws SQLException {
 				System.out.print("Current rep. ");
 				System.out.println(repetitionInfo.getCurrentRepetition());
 
@@ -402,7 +404,6 @@ public class TestProbenSQL
 				assertThrows(NoSuchElementException.class,
 						() -> { it2.next(); });
 			}
-*/
 		}
 
 	}
