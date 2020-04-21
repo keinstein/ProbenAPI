@@ -140,7 +140,7 @@ public abstract class ProbenVector<T extends Comparable<T>,VectorProbe extends G
 
 	}
 
-	ProbenVector () {
+	protected ProbenVector () {
 		data = new Vector<>();
 	}
 	Iterator<Probe<T>> findId (String id) {
