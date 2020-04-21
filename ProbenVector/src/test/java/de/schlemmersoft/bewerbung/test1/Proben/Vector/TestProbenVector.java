@@ -396,8 +396,6 @@ public class TestProbenVector
 
 			@RepeatedTest(10)
 			void testDeleteById (RepetitionInfo repetitionInfo ) {
-				System.out.print("Current rep. ");
-				System.out.println(repetitionInfo.getCurrentRepetition());
 				TestIntProbe current = samples.get(repetitionInfo.getCurrentRepetition()-1);
 				if (current.id == null) return;
 				assertTrue(data.size() >= 10);
@@ -409,13 +407,9 @@ public class TestProbenVector
 				Probe<Integer> sample1;
 
 				for (int i = 0 ; i != samples.size(); ++i) {
-					System.out.printf("#%d/%d: \n",i,repetitionInfo.getCurrentRepetition());
 					if (i == repetitionInfo.getCurrentRepetition()-1) continue;
 					current = samples.get(i);
 					sample1 = it.next();
-					System.out.print(current.id);
-					System.out.print(" == ");
-					System.out.println(sample1);
 					assertEquals(current.value,sample1.getValue());
 					assertEquals(current.time,sample1.getTime());
 					if (current.id != null) {
@@ -428,9 +422,6 @@ public class TestProbenVector
 
 			@RepeatedTest(10)
 			void testDeleteByObject (RepetitionInfo repetitionInfo ) {
-				System.out.print("Current rep. ");
-				System.out.println(repetitionInfo.getCurrentRepetition());
-
 				assertTrue(data.size() >= 10);
 				Probe<Integer> sample = null;
 				Iterator<Probe<Integer>> it = data.iterator();
@@ -446,13 +437,9 @@ public class TestProbenVector
 				it = data.iterator();
 				TestIntProbe current;
 				for (int i = 0 ; i != samples.size(); ++i) {
-					System.out.printf("#%d/%d: \n",i,repetitionInfo.getCurrentRepetition());
 					if (i == repetitionInfo.getCurrentRepetition()-1) continue;
 					current = samples.get(i);
 					sample = it.next();
-					System.out.print(current.id);
-					System.out.print(" == ");
-					System.out.println(sample);
 					assertEquals(current.value,sample.getValue());
 					assertEquals(current.time,sample.getTime());
 					if (current.id != null) {

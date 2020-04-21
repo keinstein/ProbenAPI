@@ -337,8 +337,6 @@ public class TestProbenSQL
 
 			@RepeatedTest(10)
 			void testDeleteById (RepetitionInfo repetitionInfo ) throws SQLException {
-				System.out.print("Current rep. ");
-				System.out.println(repetitionInfo.getCurrentRepetition());
 				TestSQLProbe current = samples.get(repetitionInfo.getCurrentRepetition()-1);
 				if (current.id == null) return;
 				assertTrue(data.size() >= 10);
@@ -350,13 +348,9 @@ public class TestProbenSQL
 				Probe<Integer> sample1;
 
 				for (int i = 0 ; i != samples.size(); ++i) {
-					System.out.printf("#%d/%d: \n",i,repetitionInfo.getCurrentRepetition());
 					if (i == repetitionInfo.getCurrentRepetition()-1) continue;
 					current = samples.get(i);
 					sample1 = it.next();
-					System.out.print(current.id);
-					System.out.print(" == ");
-					System.out.println(sample1);
 					assertEquals(current.value,sample1.getValue());
 					assertEquals(current.time,sample1.getTime());
 					if (current.id != null) {
@@ -369,10 +363,6 @@ public class TestProbenSQL
 
 			@RepeatedTest(10)
 			void testDeleteByObject (RepetitionInfo repetitionInfo ) throws SQLException {
-				System.out.print("Current rep. ");
-				System.out.println(repetitionInfo.getCurrentRepetition());
-
-				assertTrue(data.size() >= 10);
 				Probe<Integer> sample = null;
 				Iterator<Probe<Integer>> it = data.iterator();
 				for (int i = repetitionInfo.getCurrentRepetition(); i > 0; --i) {
@@ -387,13 +377,9 @@ public class TestProbenSQL
 				it = data.iterator();
 				TestSQLProbe current;
 				for (int i = 0 ; i != samples.size(); ++i) {
-					System.out.printf("#%d/%d: \n",i,repetitionInfo.getCurrentRepetition());
 					if (i == repetitionInfo.getCurrentRepetition()-1) continue;
 					current = samples.get(i);
 					sample = it.next();
-					System.out.print(current.id);
-					System.out.print(" == ");
-					System.out.println(sample);
 					assertEquals(current.value,sample.getValue());
 					assertEquals(current.time,sample.getTime());
 					if (current.id != null) {
@@ -407,48 +393,4 @@ public class TestProbenSQL
 		}
 
 	}
-
-	@Test
-    public static void sqliteExample()
-    {
-      Connection connection = null;
-      try
-      {
-        // create a database connection
-        connection = DriverManager.getConnection("jdbc:sqlite:sample.db");
-        Statement statement = connection.createStatement();
-        statement.setQueryTimeout(30);  // set timeout to 30 sec.
-
-        statement.executeUpdate("drop table if exists person");
-        statement.executeUpdate("create table person (id integer, name string)");
-        statement.executeUpdate("insert into person values(1, 'leo')");
-        statement.executeUpdate("insert into person values(2, 'yui')");
-        ResultSet rs = statement.executeQuery("select * from person");
-        while(rs.next())
-        {
-          // read the result set
-          System.out.println("name = " + rs.getString("name"));
-          System.out.println("id = " + rs.getInt("id"));
-        }
-      }
-      catch(SQLException e)
-      {
-        // if the error message is "out of memory",
-        // it probably means no database file is found
-        System.err.println(e.getMessage());
-      }
-      finally
-      {
-        try
-        {
-          if(connection != null)
-            connection.close();
-        }
-        catch(SQLException e)
-        {
-          // connection close failed.
-          System.err.println(e.getMessage());
-        }
-      }
-    }
 }

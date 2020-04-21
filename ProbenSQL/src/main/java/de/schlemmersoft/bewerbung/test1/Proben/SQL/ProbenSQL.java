@@ -181,10 +181,6 @@ public class ProbenSQL implements ProbenAPI<Integer>
 		@Override
 		public Iterator<Probe<Integer>> iterator() {
 			try {
-				System.out.print("SELECT id FROM "
-											+ tableName
-											+ " WHERE value => ? and value <= ? ORDER BY time");
-				System.out.printf(" with values %d and %d\n",minimum.intValue(),maximum.intValue());
 				if (SQLGetRangeIds == null)
 					SQLGetRangeIds =
 					  connection.prepareStatement("SELECT id FROM "
@@ -194,10 +190,6 @@ public class ProbenSQL implements ProbenAPI<Integer>
 				SQLGetRangeIds.setInt(2, maximum.intValue());
 				ResultSet res = SQLGetRangeIds.executeQuery();
 				SQLWarning warn = SQLGetRangeIds.getWarnings();
-				while (warn != null) {
-					System.out.println(warn.getMessage());
-					warn = warn.getNextWarning();
-				}
 				return new ProbenIterator(res);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -220,10 +212,6 @@ public class ProbenSQL implements ProbenAPI<Integer>
 					+ " WHERE value IS NULL OR value == 0 ORDER BY time");
 				ResultSet res = SQLGetFuzzyResultIds.executeQuery();
 				SQLWarning warn = SQLGetFuzzyResultIds.getWarnings();
-				while (warn != null) {
-					System.err.println(warn.getMessage());
-					warn = warn.getNextWarning();
-				}
 				return new ProbenIterator(res);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
