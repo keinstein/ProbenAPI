@@ -331,8 +331,6 @@ public class TestProbenSQL
 			void testRemoveNonexistingId() {
 				assertThrows(NoSuchElementException.class,
 						() -> { data.remove(""); });
-				assertThrows(NoSuchElementException.class,
-						() -> { data.remove(new SQLProbe("",ZonedDateTime.now())); });
 			}
 
 			@RepeatedTest(10)

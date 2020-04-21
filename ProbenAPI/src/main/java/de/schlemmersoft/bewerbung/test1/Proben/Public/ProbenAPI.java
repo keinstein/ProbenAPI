@@ -132,17 +132,6 @@ public interface ProbenAPI<T> extends Iterable<Probe<T> > {
 	 */
 	Iterable<Probe<T> > result( Probe.Interpretation key );
 
-
-	/**
-	 * Insert a fully constructed sample into the database.
-	 * Insertion is done by copying the object.
-	 *
-	 * @param sample A sample object.
-	 * @return The internal copy of this sample.
-	 * @see #add(ZonedDateTime), {@link #add(String, ZonedDateTime)}
-	 */
-	Probe<T> add (Probe<T> sample);
-
 	/**
 	 * Construct a sample without knowing its measurement result in the database.
 	 *

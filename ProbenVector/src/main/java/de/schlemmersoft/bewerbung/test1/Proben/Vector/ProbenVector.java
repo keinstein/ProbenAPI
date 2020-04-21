@@ -195,7 +195,6 @@ public abstract class ProbenVector<T extends Comparable<T>,VectorProbe extends G
 		return data.size();
 	}
 
-	@Override
 	public VectorProbe add (Probe<T>sample) throws IllegalArgumentException {
 		checkId(sample.getID());
 		int pos = findInsertionPoint (sample.getTime());

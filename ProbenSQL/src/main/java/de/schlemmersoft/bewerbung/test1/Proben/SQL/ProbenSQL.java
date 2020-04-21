@@ -349,12 +349,6 @@ public class ProbenSQL implements ProbenAPI<Integer>
 	}
 
 	@Override
-	public Probe<Integer> add(Probe<Integer> sample) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public SQLProbe add(ZonedDateTime time) {
 		try {
 			if (SQLProbeGetId == null)
