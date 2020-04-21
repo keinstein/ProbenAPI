@@ -20,6 +20,8 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>ProbenAPI</artifactId>
       <version>${project.version}</version>
+      <scope>system</scope>
+      <systemPath>${basedir}/../ProbenAPI/target/ProbenAPI-${project.version}.jar</systemPath>
     </dependency>
   </dependencies>
 

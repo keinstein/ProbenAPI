@@ -72,6 +72,7 @@ public interface ProbenAPI<T> extends Iterable<Probe<T> > {
 		/**
 		 * Create a copy of this Probe
 		 * @return a new object created as a copy of this Probe.
+		 * @throws CloneNotSupportedException
 		 */
 		Probe<T> clone() throws CloneNotSupportedException;
 
