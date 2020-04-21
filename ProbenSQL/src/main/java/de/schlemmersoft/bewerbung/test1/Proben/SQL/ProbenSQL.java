@@ -185,15 +185,15 @@ public class ProbenSQL implements ProbenAPI<Integer>
 											+ tableName
 											+ " WHERE value => ? and value <= ? ORDER BY time");
 				System.out.printf(" with values %d and %d\n",minimum.intValue(),maximum.intValue());
-				if (SQLProbeGetRangeIds == null)
-					SQLProbeGetRangeIds =
+				if (SQLGetRangeIds == null)
+					SQLGetRangeIds =
 					  connection.prepareStatement("SELECT id FROM "
 					+ tableName
 					+ " WHERE value >= ? and value <= ? ORDER BY time");
-				SQLProbeGetRangeIds.setInt(1, minimum.intValue());
-				SQLProbeGetRangeIds.setInt(2, maximum.intValue());
-				ResultSet res = SQLProbeGetRangeIds.executeQuery();
-				SQLWarning warn = SQLProbeGetRangeIds.getWarnings();
+				SQLGetRangeIds.setInt(1, minimum.intValue());
+				SQLGetRangeIds.setInt(2, maximum.intValue());
+				ResultSet res = SQLGetRangeIds.executeQuery();
+				SQLWarning warn = SQLGetRangeIds.getWarnings();
 				while (warn != null) {
 					System.out.println(warn.getMessage());
 					warn = warn.getNextWarning();
@@ -213,13 +213,13 @@ public class ProbenSQL implements ProbenAPI<Integer>
 		@Override
 		public Iterator<Probe<Integer>> iterator() {
 			try {
-				if (SQLProbeGetFuzzyResultIds == null)
-					SQLProbeGetFuzzyResultIds =
+				if (SQLGetFuzzyResultIds == null)
+					SQLGetFuzzyResultIds =
 					  connection.prepareStatement("SELECT id FROM "
 					+ tableName
 					+ " WHERE value IS NULL OR value == 0 ORDER BY time");
-				ResultSet res = SQLProbeGetFuzzyResultIds.executeQuery();
-				SQLWarning warn = SQLProbeGetFuzzyResultIds.getWarnings();
+				ResultSet res = SQLGetFuzzyResultIds.executeQuery();
+				SQLWarning warn = SQLGetFuzzyResultIds.getWarnings();
 				while (warn != null) {
 					System.err.println(warn.getMessage());
 					warn = warn.getNextWarning();
@@ -239,9 +239,9 @@ public class ProbenSQL implements ProbenAPI<Integer>
 	private PreparedStatement SQLProbeGetTime;
 	private PreparedStatement SQLProbeGetValue;
 	private PreparedStatement SQLProbeSetValue;
-	private PreparedStatement SQLProbeGetAllIds;
-	private PreparedStatement SQLProbeGetRangeIds;
-	private PreparedStatement SQLProbeGetFuzzyResultIds;
+	private PreparedStatement SQLGetAllIds;
+	private PreparedStatement SQLGetRangeIds;
+	private PreparedStatement SQLGetFuzzyResultIds;
 	private PreparedStatement SQLProbeNew;
 	String tableName;
 
@@ -291,9 +291,9 @@ public class ProbenSQL implements ProbenAPI<Integer>
 			SQLProbeGetValue.close();
 			SQLProbeGetValue = null;
 		}
-		if (SQLProbeGetAllIds != null) {
-			SQLProbeGetAllIds.close();
-			SQLProbeGetAllIds = null;
+		if (SQLGetAllIds != null) {
+			SQLGetAllIds.close();
+			SQLGetAllIds = null;
 		}
 		if (SQLProbeSetValue != null) {
 			SQLProbeSetValue.close();
@@ -317,9 +317,9 @@ public class ProbenSQL implements ProbenAPI<Integer>
 	@Override
 	public Iterator<Probe<Integer>> iterator() {
 		try {
-			if (SQLProbeGetAllIds == null)
-				SQLProbeGetAllIds = connection.prepareStatement("SELECT id FROM " + tableName + " ORDER BY time");
-			ResultSet res = SQLProbeGetAllIds.executeQuery();
+			if (SQLGetAllIds == null)
+				SQLGetAllIds = connection.prepareStatement("SELECT id FROM " + tableName + " ORDER BY time");
+			ResultSet res = SQLGetAllIds.executeQuery();
 			// TODO Auto-generated method stub
 			return new ProbenIterator(res);
 		} catch (SQLException e) {
