@@ -244,7 +244,7 @@ public class ProbenSQL implements ProbenAPI<Integer>
 			connection = null;
 			throw e;
 		}
-		tableName = tablename;
+		tableName = statement.enquoteIdentifier(tablename, true);
 	}
 
 	public ProbenSQL (String uri, String tablename) throws SQLException {
@@ -257,7 +257,7 @@ public class ProbenSQL implements ProbenAPI<Integer>
 			connection = null;
 			throw e;
 		}
-		tableName = tablename;
+		tableName = statement.enquoteIdentifier(tablename, true);
 	}
 
 	Connection getConnection () {
