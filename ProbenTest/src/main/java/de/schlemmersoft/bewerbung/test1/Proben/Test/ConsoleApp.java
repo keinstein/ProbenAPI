@@ -494,7 +494,7 @@ public final class ConsoleApp {
 	 *
 	 * @param args The program args. The first one must be a JDBC URI and the
 	 *             secound one is the database table. If less arguments are given,
-	 *             the vector<> based implementation is used.
+	 *             the vector based implementation is used.
 	 * @throws SQLException An SQL exception has been thrown by the JDBC backend.
 	 * @throws SyntaxError A syntax error lead to the termination of the program.
 	 */
