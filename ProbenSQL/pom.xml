@@ -11,9 +11,6 @@
   <artifactId>ProbenSQL</artifactId>
 
   <name>ProbenSQL</name>
-  <!-- FIXME change it to the project's website -->
-  <url>http://www.example.com</url>
-
 
   <dependencies>
     <dependency>

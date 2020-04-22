@@ -2,248 +2,117 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
   <modelVersion>4.0.0</modelVersion>
 
-
   <!-- parent pom -->
-
   <groupId>de.schlemmersoft.bewerbung.test1</groupId>
-
   <artifactId>test1-group</artifactId>
-
   <packaging>pom</packaging>
-
   <version>1.0.0-SNAPSHOT</version>
-
   <!-- sub modules -->
 
   <modules>
-
     <module>ProbenAPI</module>
-
     <module>ProbenSQL</module>
-
     <module>ProbenVector</module>
-
     <module>ProbenTest</module>
   </modules>
 
-  <url>https://github.com/example/test</url>
-
+  <url>https://github.com/keinstein/ProbenAPI</url>
   <licenses>
-
     <license>
-
-      <name>MIT</name>
-
-      <url>https://spdx.org/licenses/MIT.html</url>
-
+      <name>GPL</name>
+      <url>https://www.gnu.org/licenses/</url>
       <distribution>repo</distribution>
-
     </license>
-
   </licenses>
-
   <organization>
-
     <name>Tobias Schlemmer</name>
-
     <url>http://schlemmersoft.de/</url>
-
   </organization>
-
   <scm>
-
-    <url>https://github.com/example/test</url>
-
-    <connection>git@github.com:example/test.git</connection>
-
-    <developerConnection>git@github.com:example/test.git</developerConnection>
-
+    <url>https://github.com/keinstein/ProbenAPI</url>
+    <connection>git@github.com:keinstein/ProbenAPI.git</connection>
+    <developerConnection>git@github.com:keinstein/ProbenAPI.git</developerConnection>
   </scm>
-
   <issueManagement>
-
     <system>Issues</system>
-
-    <url>https://github.com/example/test/issues</url>
-
+    <url>https://github.com/keinstein/ProbenAPI/issues</url>
   </issueManagement>
-
   <ciManagement>
-
     <system>Pipelines</system>
-
-    <url>https://github.com/example/test/pipelines</url>
-
+    <url>https://github.com/keinstein/ProbenAPI/pipelines</url>
   </ciManagement>
-
   <contributors>
-
     <contributor>
-
-      <name>Some Contributor</name>
-
-      <email>some.contributor@example.com</email>
-
-      <url>http://example.com/</url>
-
-      <organization>Example Organization</organization>
-
-      <organizationUrl>http://example.com/</organizationUrl>
-
+      <name>Tobias Schlemmer</name>
+      <email>Tobias.Schlemmer@schlemmersoft.de</email>
+      <url>https://schlemmersoft.de/</url>
+      <organization>Tobias Schlemmer</organization>
+      <organizationUrl>https://schlemmersoft.de</organizationUrl>
       <roles>
-
         <role>scrum-master</role>
-
-      </roles>
-
-      <timezone>Europe/Amsterdam</timezone>
-
-    </contributor>
-
-    <contributor>
-
-      <name>Another Contributor</name>
-
-      <email>another.contributor@example.com</email>
-
-      <url>http://example.com/</url>
-
-      <organization>Example Organization</organization>
-
-      <organizationUrl>http://example.com/</organizationUrl>
-
-      <roles>
-
+        <role>architect</role>
+        <role>developer</role>
         <role>product-owner</role>
-
       </roles>
-
-      <timezone>Europe/Amsterdam</timezone>
-
+      <timezone>Europe/Berlin</timezone>
     </contributor>
-
   </contributors>
-
   <developers>
-
     <developer>
-
-      <id>somedev</id>
-
-      <email>some.developer@example.com</email>
-
-      <name>Some Developer</name>
-
-      <organization>Example Organization</organization>
-
-      <organizationUrl>http://example.com/</organizationUrl>
-
+      <name>Tobias Schlemmer</name>
+      <email>Tobias.Schlemmer@schlemmersoft.de</email>
+      <url>https://schlemmersoft.de/</url>
+      <organization>Tobias Schlemmer</organization>
+      <organizationUrl>https://schlemmersoft.de</organizationUrl>
       <roles>
-
+        <role>scrum-master</role>
         <role>architect</role>
-
         <role>developer</role>
-
+        <role>product-owner</role>
       </roles>
-
-      <timezone>Europe/Amsterdam</timezone>
-
+      <timezone>Europe/Berlin</timezone>
     </developer>
-
-    <developer>
-
-      <id>otherdev</id>
-
-      <email>other.developer@example.com</email>
-
-      <name>Other Developer</name>
-
-      <organization>Example Organization</organization>
-
-      <organizationUrl>http://example.com/</organizationUrl>
-
-      <roles>
-
-        <role>architect</role>
-
-        <role>developer</role>
-
-      </roles>
-
-      <timezone>Europe/Amsterdam</timezone>
-
-    </developer>
-
   </developers>
-
   <properties>
-
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
     <!-- <main.class>de.schlemmersoft.bewerbung.test1.ProbenAPI.HelloWorld</main.class> -->
-
     <maven.compiler.source>12</maven.compiler.source>
-
     <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
-
     <maven.version>3.3.9</maven.version>
     <maven.enforcer.plugin.version>3.0.0-M3</maven.enforcer.plugin.version>
     <junit.jupiter.version>5.6.2</junit.jupiter.version>
-
     <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
-
     <maven.jar.plugin.version>3.2.0</maven.jar.plugin.version>
-
     <!--    <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version> -->
     <maven.surefire.plugin.version>3.0.0-M4</maven.surefire.plugin.version>
     <!--    <maven.javadoc.plugin.version>2.0</maven.javadoc.plugin.version> -->
     <maven.javadoc.plugin.version>3.2.0</maven.javadoc.plugin.version>
     <jacoco.plugin.version>0.8.5</jacoco.plugin.version>
     <jacoco.skip>false</jacoco.skip>
-
   </properties>
-
   <dependencies>
-
     <dependency>
-
       <groupId>org.junit.jupiter</groupId>
-
       <artifactId>junit-jupiter</artifactId>
-
       <version>${junit.jupiter.version}</version>
-
       <scope>test</scope>
-
     </dependency>
     <dependency>
-
       <groupId>org.junit.jupiter</groupId>
-
       <artifactId>junit-jupiter-params</artifactId>
-
       <version>${junit.jupiter.version}</version>
-
       <scope>test</scope>
-
     </dependency>
     <dependency>
-
       <groupId>org.junit.jupiter</groupId>
-
       <artifactId>junit-jupiter-api</artifactId>
-
       <version>${junit.jupiter.version}</version>
-
       <scope>test</scope>
-
     </dependency>
   </dependencies>
   <build>
-
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -266,25 +135,15 @@
         </executions>
       </plugin>
       <plugin>
-
         <artifactId>maven-compiler-plugin</artifactId>
-
         <version>${maven.compiler.plugin.version}</version>
-
         <configuration>
-
           <showWarnings>true</showWarnings>
-
           <showDeprecation>true</showDeprecation>
-
         </configuration>
-
       </plugin>
-
       <plugin>
-
         <artifactId>maven-surefire-plugin</artifactId>
-
         <version>${maven.surefire.plugin.version}</version>
 	<configuration>
 	  <argLine>@{jacoco.argLine} -ea</argLine>
@@ -301,7 +160,6 @@
             </configurationParameters>
           </properties>
 	</configuration>
-
         <!--
 	    <executions>
             <execution>
@@ -327,43 +185,26 @@
 	  </dependency>
         </dependencies>
 	-->
-
         <!--
             <dependencies>
-
 <dependency>
-
 <groupId>org.junit.platform</groupId>
-
 <artifactId>junit-platform-surefire-provider</artifactId>
-
 <version>1.1.0</version>
-
 </dependency>
-
 <dependency>
-
 <groupId>org.junit.jupiter</groupId>
-
 <artifactId>junit-jupiter-engine</artifactId>
-
 <version>5.1.0</version>
-
 </dependency>
-
 </dependencies>
 	-->
       </plugin>
-
       <plugin>
-
         <groupId>org.jacoco</groupId>
-
         <artifactId>jacoco-maven-plugin</artifactId>
-
         <version>${jacoco.plugin.version}</version>
         <!--	<version>0.8.2</version> -->
-
         <executions>
           <execution>
             <id>jacoco-check</id>
@@ -372,17 +213,11 @@
             </goals>
           </execution>
           <execution>
-            	    
             <id>report</id>
-            	    
             <phase>test</phase>
-            	    
             <goals>
-              	      
               <goal>report</goal>
-              	    
             </goals>
-            	  
           </execution>
           <execution>
             <id>jacoco-initialize</id>
@@ -400,47 +235,29 @@
                 <goal>report</goal>
             </goals>
         </execution>
- 
           <!--<execution>
-
               <goals>
-
               <goal>prepare-agent</goal>
-
               </goals>
-
               </execution> -->
-
           <!-- attached to Maven test phase -->
-
 	  <!--          <execution>
-
                <id>report</id>
-
                <phase>test</phase>
-
                <goals>
-
                <goal>report</goal>
-
                </goals>
-
                </execution>
 	  -->
         </executions>
-
       </plugin>
       <plugin>
-
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>${maven.javadoc.plugin.version}</version>
-
         <configuration>
           <source>8</source>
           <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
-
         </configuration>
-
 	<executions>
 	  <execution>
 	    <id>attach-javadocs</id>
@@ -450,35 +267,20 @@
 	  </execution>
 	</executions>
       </plugin>
-
       <plugin>
-
         <groupId>org.apache.maven.plugins</groupId>
-
         <artifactId>maven-jar-plugin</artifactId>
-
         <version>${maven.jar.plugin.version}</version>
-
         <configuration>
-
           <archive>
-
             <manifest>
-
               <addClasspath>true</addClasspath>
-
               <classpathPrefix>lib/</classpathPrefix>
-
               <mainClass>${main.class}</mainClass>
-
             </manifest>
-
           </archive>
-
         </configuration>
-
       </plugin>
-
       <plugin>
 	<groupId>org.moditect</groupId>
 	<artifactId>moditect-maven-plugin</artifactId>
@@ -521,7 +323,5 @@
 	</executions>
       </plugin>
 </plugins>
-
 </build>
-
 </project>
