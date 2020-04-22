@@ -12,4 +12,8 @@
  */
 module de.schlemmersoft.bewerbung.test1.ProbenAPI {
 	exports de.schlemmersoft.bewerbung.test1.Proben.Public;
+	requires java.base;
+	requires java.rmi;
+	requires jdk.compiler;
+	opens de.schlemmersoft.bewerbung.test1.Proben.Public;
 }
