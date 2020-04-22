@@ -6,6 +6,7 @@ import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -138,6 +139,7 @@ public final class ConsoleApp {
 		abstract void print(PrintStream stream);
 		abstract boolean parse(Scanner sc) throws SyntaxError;
 		boolean execute() {
+			System.out.println("Internal error.");
 			throw new UnsupportedOperationException("Not implemented, yet.");
 		}
 	}
@@ -154,7 +156,7 @@ public final class ConsoleApp {
 
 		@Override
 		public void print(PrintStream stream) {
-			stream.printf("Got: help\n");
+			stream.printf("# Got: help\n");
 		}
 
 		@Override
@@ -207,7 +209,7 @@ public final class ConsoleApp {
 		@Override
 		public boolean parse(Scanner sc) {
 			comment = sc.nextLine();
-			return true;
+			return false;
 		}
 
 		@Override
@@ -243,13 +245,13 @@ public final class ConsoleApp {
 			value = null;
 			if (!sc.hasNext()) {
 				errorUsage();
-				return false;
+				return true;
 			}
 			if (!sc.hasNext(datePattern))
 				id = sc.next();
 			if (!sc.hasNext(datePattern)) {
 				errorUsage();
-				return false;
+				return true;
 			}
 			time = ZonedDateTime.parse(sc.next(datePattern));
 			if (sc.hasNextInt()) {
@@ -264,9 +266,10 @@ public final class ConsoleApp {
 			if (time == null)
 				return true;
 			Probe<Integer> sample = null;
-			if (id == null)
+			if (id == null) {
 				sample  = api.add(time);
-			else
+				System.out.printf("New id %s\n",sample.getID());
+			} else
 				sample = api.add(id,time);
 			if (value != null)
 				sample.setValue(value);
@@ -276,7 +279,6 @@ public final class ConsoleApp {
 
 	static class addvalueCommand extends Command {
 		String id = null;
-		ZonedDateTime time = null;
 		int value = 0;
 
 		@Override
@@ -286,39 +288,47 @@ public final class ConsoleApp {
 
 		@Override
 		public void print(PrintStream stream) {
-			stream.printf("Got: remove %s %s\n",
+			stream.printf("# Got: addvalue %s %d\n",
 					id == null ? "<null>" : id,
-					time == null ? "<null>" : time.toString());
-
+					value);
 		}
 
 		@Override
 		public boolean parse(Scanner sc) throws SyntaxError {
 			id = null;
-			time = null;
 			value = 0;
 
 			if (!sc.hasNext()) {
 				errorUsage();
-				return false;
+				id = null;
+				return true;
 			}
 			id = sc.next();
-			if (sc.hasNext(datePattern)) {
-				time = ZonedDateTime.parse(sc.next(datePattern));
-			}
 			if (!sc.hasNextInt()) {
 				errorUsage();
-				return false;
+				id = null;
+				return true;
 			}
 			value = sc.nextInt();
 			print(System.out);
+			return true;
+		}
+
+		@Override
+		boolean execute() {
+			if (id == null) return true;
+			try {
+				Probe<Integer> sample = api.get(id);
+				sample.setValue(value);
+			} catch (NoSuchElementException e) {
+				System.err.println("The sample could not be found.");
+			}
 			return true;
 		}
 	}
 
 	static class removeCommand extends Command {
 		String id = null;
-		ZonedDateTime time = null;
 
 		@Override
 		public void usage(PrintStream stream) {
@@ -327,25 +337,30 @@ public final class ConsoleApp {
 
 		@Override
 		public void print(PrintStream stream) {
-			stream.printf("Got: remove %s %s\n",
-					id == null ? "<null>" : id,
-					time == null ? "<null>" : time.toString());
+			stream.printf("# Got: remove %s\n",
+					id == null ? "<null>" : id);
 
 		}
 
 		@Override
 		public boolean parse(Scanner sc) throws SyntaxError {
 			id = null;
-			time = null;
 			if (!sc.hasNext()) {
 				errorUsage();
-				return false;
+				return true;
 			}
 			id = sc.next();
-			if (sc.hasNext(datePattern)) {
-				time = ZonedDateTime.parse(sc.next(datePattern));
-			}
 			print(System.out);
+			return true;
+		}
+
+		@Override
+		boolean execute() {
+			try {
+				api.remove(id);
+			} catch (NoSuchElementException e) {
+				System.err.println("The sample could not be found.");
+			}
 			return true;
 		}
 	}
@@ -358,7 +373,7 @@ public final class ConsoleApp {
 
 		@Override
 		public void print(PrintStream stream) {
-			stream.println("Got: list");
+			stream.println("# Got: list");
 		}
 
 		@Override
@@ -395,7 +410,7 @@ public final class ConsoleApp {
 
 		@Override
 		public void print(PrintStream stream) {
-			stream.printf("Got: list %s %s\n",
+			stream.printf("# Got: range %s %s\n",
 							  from == null ? "<null>": from.toString(),
 							  to == 0 ? "<null>": to.toString());
 		}
@@ -404,15 +419,30 @@ public final class ConsoleApp {
 		public boolean parse(Scanner sc) throws SyntaxError {
 			if (!sc.hasNextInt()) {
 				errorUsage();
-				return false;
+				return true;
 			}
 			from = sc.nextInt();
 			if (!sc.hasNextInt()) {
 				errorUsage();
-				return false;
+				return true;
 			}
 			to = sc.nextInt();
 			print(System.out);
+			return true;
+		}
+
+		@Override
+		boolean execute() {
+			Iterator<Probe<Integer>> it = api.range(from,to).iterator();
+			Probe<Integer> sample;
+			while (it.hasNext()) {
+				sample = it.next();
+				Integer value = sample.getValue();
+				System.out.printf("%-36s\t%s\t%s\n",
+								  sample.getID(),
+								  sample.getTime(),
+								  value == null? "":value);
+			}
 			return true;
 		}
 	}
@@ -432,7 +462,7 @@ public final class ConsoleApp {
 
 		@Override
 		public void print(PrintStream stream) {
-			stream.printf("Got: result %s\n",
+			stream.printf("# Got: result %s\n",
 							  result == null ? "<null>": result.toString());
 		}
 
@@ -441,14 +471,29 @@ public final class ConsoleApp {
 			result = null;
 			if (!sc.hasNext()) {
 				errorUsage();
-				return false;
+				return true;
 			}
 			result = valueMap.get(sc.next());
 			if (result == null) {
 				errorUsage();
-				return false;
+				return true;
 			}
 			print(System.out);
+			return true;
+		}
+
+		@Override
+		boolean execute() {
+			Iterator<Probe<Integer>> it = api.result(result).iterator();
+			Probe<Integer> sample;
+			while (it.hasNext()) {
+				sample = it.next();
+				Integer value = sample.getValue();
+				System.out.printf("%-36s\t%s\t%s\n",
+								  sample.getID(),
+								  sample.getTime(),
+								  value == null? "":value);
+			}
 			return true;
 		}
 	}
@@ -472,22 +517,21 @@ public final class ConsoleApp {
 		while(sc.hasNext()) {
 			String commandName = sc.next();
 			Command command = commands.get(commandName);
+			boolean skipGarbage = true;
 			if (command != null) {
-				if (!command.parse(sc))
-					return;
+				skipGarbage = command.parse(sc);
 				if (!command.execute())
 					return;
 			} else {
 				System.err.printf("Unknown command %s.\n",commandName);
 			}
-			sc.nextLine(); // ignore garbage
+			if (skipGarbage) sc.nextLine(); // ignore garbage
 		}
 	}
 
 
 	/**
 	 * @param args
-	 * @throws SQLException
 	 */
 	public static void main(String[] args) {
 		try {

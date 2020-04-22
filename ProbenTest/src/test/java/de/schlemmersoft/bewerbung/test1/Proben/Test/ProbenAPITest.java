@@ -1,7 +1,5 @@
 package de.schlemmersoft.bewerbung.test1.Proben.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -12,10 +10,8 @@ import java.sql.SQLException;
 import java.time.ZonedDateTime;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 
 import de.schlemmersoft.bewerbung.test1.Proben.Public.GenericProbe;
 import de.schlemmersoft.bewerbung.test1.Proben.Public.ProbenAPI;
@@ -55,7 +51,7 @@ public class ProbenAPITest
 		final InputStream original = System.in;
 		final FileInputStream fips = new FileInputStream(file);
 		System.setIn(fips);
-	    ConsoleApp.mainProgram(args);
+		ConsoleApp.mainProgram(args);
 	    System.setIn(original);
 	}
 }
