@@ -230,6 +230,17 @@
       <scope>test</scope>
 
     </dependency>
+    <dependency>
+
+      <groupId>org.junit.jupiter</groupId>
+
+      <artifactId>junit-jupiter-api</artifactId>
+
+      <version>${junit.jupiter.version}</version>
+
+      <scope>test</scope>
+
+    </dependency>
   </dependencies>
   <build>
 
@@ -279,10 +290,8 @@
 	  <argLine>@{jacoco.argLine} -ea</argLine>
 	  <reuseForks>true</reuseForks>
 	  <forkCount>1</forkCount>
-	  <!--
-	  <!- - forking conflicts with jacoco - ->
+	  <!-- forking conflicts with jacoco -->
 	  <trimStackTrace>false</trimStackTrace>
-	  -->
           <!-- <useSystemClassLoader>false</useSystemClassLoader>	-->
           <properties>
             <configurationParameters>
@@ -294,29 +303,30 @@
 	</configuration>
 
         <!--
-	<executions>
-          <execution>
+	    <executions>
+            <execution>
             <id>default-test</id>
             <phase>test</phase>
             <goals>
-              <goal>test</goal>
+            <goal>test</goal>
             </goals>
-          </execution>
-	</executions>
-	    <dependencies>
-            <dependency>
+            </execution>
+	    </executions>
+	-->
+	<!--
+	<dependencies>
+          <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-surefire-provider</artifactId>
             <version>1.2.0</version>
-            </dependency>
-	    <dependency>
+          </dependency>
+	  <dependency>
 	    <groupId>org.junit.jupiter</groupId>
 	    <artifactId>junit-jupiter-engine</artifactId>
 	    <version>${junit.jupiter.version}</version>
-	    </dependency>
-            </dependencies>
+	  </dependency>
+        </dependencies>
 	-->
-
 
         <!--
             <dependencies>
