@@ -23,8 +23,10 @@ import de.schlemmersoft.bewerbung.test1.Proben.Public.ProbenAPI.Probe;
  *  retrieving unnecessary data from a larger database.
  *
  * 	@author  Tobias Schlemmer
+ * @param <T> Type of the measurement data. We allow only Objects as we want to
+ *            represent null values
  */
-public interface ProbenAPI<T> extends Iterable<Probe<T> > {
+public interface ProbenAPI<T extends Object> extends Iterable<Probe<T>> {
 	/**
 	 *
 	 * API for a single sample.

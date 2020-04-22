@@ -8,8 +8,10 @@ import java.time.ZonedDateTime;
  * A simple in-memory storage sample class.
  *
  * @author Tobias Schlemmer
+ * @param <T> Data type of the sample measurment. This must be a class such as
+ *            #Integer in order to support null values.
  */
-public abstract class GenericProbe<T> implements Probe<T>, Cloneable {
+public abstract class GenericProbe<T extends Object> implements Probe<T>, Cloneable {
 	/**
 	 * Storage for the ID of the sample.
 	 */
