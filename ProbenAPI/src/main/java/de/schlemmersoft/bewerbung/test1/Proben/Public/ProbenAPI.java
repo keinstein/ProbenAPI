@@ -1,7 +1,8 @@
 package de.schlemmersoft.bewerbung.test1.Proben.Public;
 import java.time.ZonedDateTime;
-import de.schlemmersoft.bewerbung.test1.Proben.Public.ProbenAPI.Probe;
+import java.util.NoSuchElementException;
 
+import de.schlemmersoft.bewerbung.test1.Proben.Public.ProbenAPI.Probe;
 
 /**
  *
@@ -132,6 +133,7 @@ public interface ProbenAPI<T> extends Iterable<Probe<T> > {
 	 * @return An iterable whose iterator traverses all samples can be interpreted as being as good as key.
 	 */
 	Iterable<Probe<T> > result( Probe.Interpretation key );
+	Probe<T> get(String id) throws NoSuchElementException;
 
 	/**
 	 * Construct a sample without knowing its measurement result in the database.

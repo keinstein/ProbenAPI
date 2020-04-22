@@ -193,6 +193,13 @@ public class TestProbenVector
 
 			assertThrows(IllegalArgumentException.class,
 					() -> { data.add("Sample 1",time); });
+
+			// check for existence
+			IntProbe newsample = data.get("Sample 1");
+			assertSame(origsample,newsample);
+
+			assertThrows(NoSuchElementException.class,
+					() -> { data.get("Sample 3"); });
 		}
 
 		@Test

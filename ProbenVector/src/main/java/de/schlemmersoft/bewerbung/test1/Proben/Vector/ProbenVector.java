@@ -8,6 +8,8 @@ import java.util.UUID;
 import java.util.Vector;
 import java.time.ZonedDateTime;
 import de.schlemmersoft.bewerbung.test1.Proben.Public.*;
+import de.schlemmersoft.bewerbung.test1.Proben.Public.ProbenAPI.Probe;
+
 import static de.schlemmersoft.bewerbung.test1.Proben.Public.ProbenAPI.Probe.Interpretation;
 
 
@@ -195,6 +197,15 @@ public abstract class ProbenVector<T extends Comparable<T>,VectorProbe extends G
 		return data.size();
 	}
 
+	public VectorProbe get(String id) {
+		return (VectorProbe) findId(id).next();
+	}
+
+	/**
+	 * @param sample
+	 * @return
+	 * @throws IllegalArgumentException
+	 */
 	public VectorProbe add (Probe<T>sample) throws IllegalArgumentException {
 		checkId(sample.getID());
 		int pos = findInsertionPoint (sample.getTime());

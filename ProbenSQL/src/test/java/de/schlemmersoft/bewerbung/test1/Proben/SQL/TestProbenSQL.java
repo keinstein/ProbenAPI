@@ -136,6 +136,13 @@ public class TestProbenSQL
 
 			assertThrows(IllegalArgumentException.class,
 					() -> { data.add("Sample 1",time); });
+
+			// check for existence
+			SQLProbe newsample = data.get("Sample 1");
+			assertEquals(origsample,newsample);
+
+			assertThrows(NoSuchElementException.class,
+					() -> { data.get("Sample 3"); });
 		}
 
 		@Test

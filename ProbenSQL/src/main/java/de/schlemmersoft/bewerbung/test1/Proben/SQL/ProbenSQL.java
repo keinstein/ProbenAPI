@@ -347,6 +347,28 @@ public class ProbenSQL implements ProbenAPI<Integer>
 	}
 
 	@Override
+	public SQLProbe get(String id) {
+		try {
+			if (SQLProbeGetId == null)
+				SQLProbeGetId = connection.prepareStatement("SELECT count(*) FROM " + tableName + " WHERE id = ? ORDER BY time");
+			SQLProbeGetId.setString(1,id);
+			ResultSet res = SQLProbeGetId.executeQuery();
+			res.next();
+			SQLProbe retval = null;
+			if (res.getInt(1) > 0)
+				retval = new SQLProbe(id);
+			res.close();
+			if (retval == null)
+				throw new NoSuchElementException();
+			return retval;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	@Override
 	public SQLProbe add(ZonedDateTime time) {
 		try {
 			if (SQLProbeGetId == null)
