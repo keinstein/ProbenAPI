@@ -263,4 +263,13 @@ public class GenericProbeTest {
 		testClone(probe);
 	}
 
+	@Test
+	void workaroundNotStartingParametrizedTestsTest() throws Throwable {
+		testFullConstructor("0", ZonedDateTime.now(), 1, Interpretation.GOOD);
+		testFullConstructor("1", ZonedDateTime.now(), 0, Interpretation.FUZZY);
+		testFullConstructor("2", ZonedDateTime.now(), -1, Interpretation.BAD);
+		testReducedConstructor("0", ZonedDateTime.now(), 1, Interpretation.GOOD);
+		testReducedConstructor("1", ZonedDateTime.now(), 0, Interpretation.FUZZY);
+		testReducedConstructor("2", ZonedDateTime.now(), -1, Interpretation.BAD);
+	}
 }
