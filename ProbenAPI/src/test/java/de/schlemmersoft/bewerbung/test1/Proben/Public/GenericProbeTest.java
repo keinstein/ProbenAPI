@@ -1,6 +1,5 @@
 package de.schlemmersoft.bewerbung.test1.Proben.Public;
 
-
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
@@ -15,7 +14,7 @@ import static de.schlemmersoft.bewerbung.test1.Proben.Public.ProbenAPI.Probe.Int
 
 /**
  * Test cases for the class GenericProbe
- * 
+ *
  * @author Tobias Schlemmer
  *
  */
@@ -101,19 +100,19 @@ public class GenericProbeTest {
 	/*
 	 * class Integer implements Probe.Messwert { public int value; public
 	 * Integer.valueOf(int v) { value = v; }
-	 * 
+	 *
 	 * Override public boolean equals (Object other) { if (this == other) return
 	 * true; if (other instanceof Integer) return equals((Integer)other); return
 	 * false; }
-	 * 
+	 *
 	 * Override public boolean equals(Messwert other) { if (other instanceof
 	 * Integer) return equals((Integer)other); return false; }
-	 * 
+	 *
 	 * public boolean equals(Integer other) { return value == other.value; }
-	 * 
-	 * 
+	 *
+	 *
 	 * Override public Integer clone() { return Integer.valueOf(value); }
-	 * 
+	 *
 	 * Override public Interpretation getInterpretation() { if (value > 0) return
 	 * Interpretation.GOOD; if (value < 0) return Interpretation.BAD; return
 	 * Interpretation.FUZZY; } }
@@ -136,7 +135,7 @@ public class GenericProbeTest {
 
 	/**
 	 * Test cloning of a particular IntProbe object.
-	 * 
+	 *
 	 * @param probe the object to be cloned.
 	 * @throws CloneNotSupportedException If the underlying clone operation fails.
 	 */
@@ -192,7 +191,7 @@ public class GenericProbeTest {
 
 	/**
 	 * Test the full constructor of GenericProbe objects.
-	 * 
+	 *
 	 * @param testId             Identifier of the generated sample.
 	 * @param testtime           Time of the generated sample.
 	 * @param testValue          The measurement value to be tested.
@@ -222,9 +221,10 @@ public class GenericProbeTest {
 				Arguments.of("2", ZonedDateTime.now(), -1, Interpretation.BAD));
 	}
 
-
 	/**
-	 * Test the constructor without the measurement value. The value is added afterwards.
+	 * Test the constructor without the measurement value. The value is added
+	 * afterwards.
+	 *
 	 * @param testId             Identifier of the generated sample.
 	 * @param testtime           Time of the generated sample.
 	 * @param testValue          The measurement value to be tested.

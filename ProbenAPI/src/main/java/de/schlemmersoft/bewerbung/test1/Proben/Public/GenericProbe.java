@@ -58,16 +58,18 @@ public abstract class GenericProbe<T extends Object> implements Probe<T>, Clonea
 	public GenericProbe(Probe<T> sample) {
 		id = sample.getID();
 		time = sample.getTime();
-		setValue (sample.getValue());
+		setValue(sample.getValue());
 	}
 
 	/**
 	 * Compare a sample to some JAVA object.
+	 *
 	 * @param other the object which shall be compared.
 	 */
 	@Override
-	public boolean equals (Object other) {
-		if (this == other) return true;
+	public boolean equals(Object other) {
+		if (this == other)
+			return true;
 		if (other instanceof Probe<?>) return equals((Probe<T>)other);
 		return false;
 	}
@@ -80,17 +82,16 @@ public abstract class GenericProbe<T extends Object> implements Probe<T>, Clonea
 			return false;
 		if (value != null) {
 			T o = other.getValue();
-				if (!value.equals(o))
+			if (!value.equals(o))
 				return false;
 		}
-		return id.equals(other.getID())
-				&& time.equals(other.getTime());
+		return id.equals(other.getID()) && time.equals(other.getTime());
 	}
 
-
 	public GenericProbe<T> clone() throws CloneNotSupportedException {
-		GenericProbe<T> c = (GenericProbe<T>)super.clone();
-		if (c == null) throw new CloneNotSupportedException();
+		GenericProbe<T> c = (GenericProbe<T>) super.clone();
+		if (c == null)
+			throw new CloneNotSupportedException();
 		if (c.value != null)
 			c.value = cloneValue(c.value);
 		return c;
@@ -113,12 +114,4 @@ public abstract class GenericProbe<T extends Object> implements Probe<T>, Clonea
 	}
 
 	protected abstract T cloneValue(T v);
-
-	/*
-	public Probe.Interpretation getInterpretation() {
-		if (value != null)
-			return value.getInterpretation();
-		return Probe.Interpretation.FUZZY;
-	}
-	*/
 }
