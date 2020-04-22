@@ -1,3 +1,7 @@
 */target
 *~
 \#*
+*.javae
+*/.settings
+*/.classpath
+*/.project
