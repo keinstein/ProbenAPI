@@ -83,7 +83,8 @@ public interface ProbenAPI<T extends Object> extends Iterable<Probe<T>> {
 		 * Create a copy of this Probe
 		 *
 		 * @return a new object created as a copy of this Probe.
-		 * @throws CloneNotSupportedException
+		 * @throws CloneNotSupportedException if an error
+		 * occures during cloning.
 		 */
 		Probe<T> clone() throws CloneNotSupportedException;
 
@@ -170,7 +171,7 @@ public interface ProbenAPI<T extends Object> extends Iterable<Probe<T>> {
 	 * @param time Date and Time (including timezone) when the measurement has to be
 	 *             taken.
 	 * @return The constructed sample in the database.
-	 * @see {@link #add(String, ZonedDateTime)}
+	 * @see #add(String, ZonedDateTime)
 	 */
 	Probe<T> add(ZonedDateTime time);
 
