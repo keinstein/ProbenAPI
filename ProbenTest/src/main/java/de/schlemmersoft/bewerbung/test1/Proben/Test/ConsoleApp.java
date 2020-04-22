@@ -22,7 +22,6 @@ import de.schlemmersoft.bewerbung.test1.Proben.Vector.ProbenVector;
  *
  */
 
-
 /**
  * @author Tobias Schlemmer
  *
@@ -30,7 +29,7 @@ import de.schlemmersoft.bewerbung.test1.Proben.Vector.ProbenVector;
 public final class ConsoleApp {
 	static ProbenAPI<Integer> api;
 
-	static class IntProbe extends GenericProbe <Integer>{
+	static class IntProbe extends GenericProbe<Integer> {
 
 		public IntProbe(String i, ZonedDateTime t) {
 			super(i, t);
@@ -66,14 +65,15 @@ public final class ConsoleApp {
 
 		@Override
 		protected Integer cloneValue(Integer v) {
-			if (v == null) return null;
+			if (v == null)
+				return null;
 			int tmp = v.intValue();
 			return Integer.valueOf(tmp);
 		}
 
 		@Override
 		public IntProbe clone() throws CloneNotSupportedException {
-			return (IntProbe)super.clone();
+			return (IntProbe) super.clone();
 		}
 
 		@Override
@@ -91,18 +91,18 @@ public final class ConsoleApp {
 			return buf.toString();
 		}
 	}
+
 	static class IntProbenVector extends ProbenVector<Integer, IntProbe> {
 
 		IntProbenVector() {
 			super();
-			// TODO Auto-generated constructor stub
 		}
 
 		@Override
 		protected IntProbe createElement(String id, ZonedDateTime time, Integer value) {
 			if (value == null)
-				return new IntProbe(id,time);
-			return new IntProbe(id,time,value.intValue());
+				return new IntProbe(id, time);
+			return new IntProbe(id, time, value.intValue());
 		}
 
 		@Override
@@ -112,10 +112,8 @@ public final class ConsoleApp {
 
 	}
 
-
-	private static final Pattern commandPattern = Pattern.compile("add|range|result|delete|clear|quit",Pattern.CASE_INSENSITIVE);
-	private static final Pattern datePattern =
-			Pattern.compile("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?[-+]\\d{2}:\\d{2}\\[[A-Za-z/]+\\]");
+	private static final Pattern datePattern = Pattern
+			.compile("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?[-+]\\d{2}:\\d{2}\\[[A-Za-z/]+\\]");
 
 	static class SyntaxError extends Throwable {
 
@@ -132,12 +130,17 @@ public final class ConsoleApp {
 			print(System.err);
 			throw new SyntaxError();
 		}
+
 		void printUsage(PrintStream stream, String command, String usage) {
-			stream.printf("%-8s %s\n",command,usage);
+			stream.printf("%-8s %s\n", command, usage);
 		}
+
 		abstract void usage(PrintStream stream);
+
 		abstract void print(PrintStream stream);
+
 		abstract boolean parse(Scanner sc) throws SyntaxError;
+
 		boolean execute() {
 			System.out.println("Internal error.");
 			throw new UnsupportedOperationException("Not implemented, yet.");
@@ -147,8 +150,8 @@ public final class ConsoleApp {
 	static class helpCommand extends Command {
 		@Override
 		public void usage(PrintStream stream) {
-			printUsage(stream,"help","");
-			for (Command command : commands.values() ) {
+			printUsage(stream, "help", "");
+			for (Command command : commands.values()) {
 				if (command != this)
 					command.usage(stream);
 			}
@@ -174,7 +177,7 @@ public final class ConsoleApp {
 	static class quitCommand extends Command {
 		@Override
 		public void usage(PrintStream stream) {
-			printUsage(stream,"quit","");
+			printUsage(stream, "quit", "");
 		}
 
 		@Override
@@ -196,6 +199,7 @@ public final class ConsoleApp {
 
 	static class commentCommand extends Command {
 		String comment;
+
 		@Override
 		public void usage(PrintStream stream) {
 			stream.printf("# [this line will be output verbatim]\n");
@@ -219,7 +223,6 @@ public final class ConsoleApp {
 		}
 	}
 
-
 	static class addCommand extends Command {
 		String id = null;
 		ZonedDateTime time = null;
@@ -227,14 +230,12 @@ public final class ConsoleApp {
 
 		@Override
 		public void usage(PrintStream stream) {
-			printUsage(stream,"add","[id] date [number]");
+			printUsage(stream, "add", "[id] date [number]");
 		}
 
 		@Override
 		public void print(PrintStream stream) {
-			stream.printf("added %s %s %s\n",
-					id == null ? "<null>" : id,
-					time == null ? "<null>" : time.toString(),
+			stream.printf("added %s %s %s\n", id == null ? "<null>" : id, time == null ? "<null>" : time.toString(),
 					value == null ? "<null>" : value.toString());
 		}
 
@@ -267,10 +268,10 @@ public final class ConsoleApp {
 				return true;
 			Probe<Integer> sample = null;
 			if (id == null) {
-				sample  = api.add(time);
-				System.out.printf("New id %s\n",sample.getID());
+				sample = api.add(time);
+				System.out.printf("New id %s\n", sample.getID());
 			} else
-				sample = api.add(id,time);
+				sample = api.add(id, time);
 			if (value != null)
 				sample.setValue(value);
 			return true;
@@ -283,14 +284,12 @@ public final class ConsoleApp {
 
 		@Override
 		public void usage(PrintStream stream) {
-			printUsage(stream,"addvalue", "id [date] value");
+			printUsage(stream, "addvalue", "id [date] value");
 		}
 
 		@Override
 		public void print(PrintStream stream) {
-			stream.printf("# Got: addvalue %s %d\n",
-					id == null ? "<null>" : id,
-					value);
+			stream.printf("# Got: addvalue %s %d\n", id == null ? "<null>" : id, value);
 		}
 
 		@Override
@@ -316,7 +315,8 @@ public final class ConsoleApp {
 
 		@Override
 		boolean execute() {
-			if (id == null) return true;
+			if (id == null)
+				return true;
 			try {
 				Probe<Integer> sample = api.get(id);
 				sample.setValue(value);
@@ -332,13 +332,12 @@ public final class ConsoleApp {
 
 		@Override
 		public void usage(PrintStream stream) {
-			printUsage(stream,"remove", "id [date]");
+			printUsage(stream, "remove", "id [date]");
 		}
 
 		@Override
 		public void print(PrintStream stream) {
-			stream.printf("# Got: remove %s\n",
-					id == null ? "<null>" : id);
+			stream.printf("# Got: remove %s\n", id == null ? "<null>" : id);
 
 		}
 
@@ -368,7 +367,7 @@ public final class ConsoleApp {
 	static class listCommand extends Command {
 		@Override
 		public void usage(PrintStream stream) {
-			printUsage(stream,"list","");
+			printUsage(stream, "list", "");
 		}
 
 		@Override
@@ -389,10 +388,7 @@ public final class ConsoleApp {
 			while (it.hasNext()) {
 				sample = it.next();
 				Integer value = sample.getValue();
-				System.out.printf("%-36s\t%s\t%s\n",
-								  sample.getID(),
-								  sample.getTime(),
-								  value == null? "":value);
+				System.out.printf("%-36s\t%s\t%s\n", sample.getID(), sample.getTime(), value == null ? "" : value);
 			}
 			return true;
 		}
@@ -405,14 +401,13 @@ public final class ConsoleApp {
 
 		@Override
 		public void usage(PrintStream stream) {
-			printUsage(stream,"range", "from to");
+			printUsage(stream, "range", "from to");
 		}
 
 		@Override
 		public void print(PrintStream stream) {
-			stream.printf("# Got: range %s %s\n",
-							  from == null ? "<null>": from.toString(),
-							  to == 0 ? "<null>": to.toString());
+			stream.printf("# Got: range %s %s\n", from == null ? "<null>" : from.toString(),
+					to == 0 ? "<null>" : to.toString());
 		}
 
 		@Override
@@ -433,15 +428,12 @@ public final class ConsoleApp {
 
 		@Override
 		boolean execute() {
-			Iterator<Probe<Integer>> it = api.range(from,to).iterator();
+			Iterator<Probe<Integer>> it = api.range(from, to).iterator();
 			Probe<Integer> sample;
 			while (it.hasNext()) {
 				sample = it.next();
 				Integer value = sample.getValue();
-				System.out.printf("%-36s\t%s\t%s\n",
-								  sample.getID(),
-								  sample.getTime(),
-								  value == null? "":value);
+				System.out.printf("%-36s\t%s\t%s\n", sample.getID(), sample.getTime(), value == null ? "" : value);
 			}
 			return true;
 		}
@@ -450,10 +442,8 @@ public final class ConsoleApp {
 	static class resultCommand extends Command {
 		Interpretation result;
 
-		static final Map<String,Interpretation> valueMap = Map.of(
-				"GOOD",  Interpretation.GOOD,
-				"FUZZY", Interpretation.FUZZY,
-				"BAD",   Interpretation.BAD);
+		static final Map<String, Interpretation> valueMap = Map.of("GOOD", Interpretation.GOOD, "FUZZY",
+				Interpretation.FUZZY, "BAD", Interpretation.BAD);
 
 		@Override
 		public void usage(PrintStream stream) {
@@ -462,8 +452,7 @@ public final class ConsoleApp {
 
 		@Override
 		public void print(PrintStream stream) {
-			stream.printf("# Got: result %s\n",
-							  result == null ? "<null>": result.toString());
+			stream.printf("# Got: result %s\n", result == null ? "<null>" : result.toString());
 		}
 
 		@Override
@@ -489,32 +478,33 @@ public final class ConsoleApp {
 			while (it.hasNext()) {
 				sample = it.next();
 				Integer value = sample.getValue();
-				System.out.printf("%-36s\t%s\t%s\n",
-								  sample.getID(),
-								  sample.getTime(),
-								  value == null? "":value);
+				System.out.printf("%-36s\t%s\t%s\n", sample.getID(), sample.getTime(), value == null ? "" : value);
 			}
 			return true;
 		}
 	}
 
-	static Map<String,Command> commands = Map.of(
-			"quit",	 new quitCommand(),
-			"add",	  new addCommand(),
-			"addvalue", new addvalueCommand(),
-			"remove",   new removeCommand(),
-			"list",	 new listCommand(),
-			"range",	new rangeCommand(),
-			"result",   new resultCommand(),
-			"help",	 new helpCommand(),
-			"#",		new commentCommand());
+	static Map<String, Command> commands = Map.of("quit", new quitCommand(), "add", new addCommand(), "addvalue",
+			new addvalueCommand(), "remove", new removeCommand(), "list", new listCommand(), "range",
+			new rangeCommand(), "result", new resultCommand(), "help", new helpCommand(), "#", new commentCommand());
 
+	/**
+	 * The acutual main program. This method is separated from the main function in
+	 * order to keep exception handling visible to the the test runner.
+	 *
+	 * @param args The program args. The first one must be a JDBC URI and the
+	 *             secound one is the database table. If less arguments are given,
+	 *             the vector<> based implementation is used.
+	 * @throws SQLException An SQL exception has been thrown by the JDBC backend.
+	 * @throws SyntaxError A syntax error lead to the termination of the program.
+	 */
 	public static void mainProgram(String[] args) throws SQLException, SyntaxError {
 		if (args != null && args.length < 2)
 			api = new ProbenSQL("jdbc:sqlite:" + args[0], args[1]);
-		else api = new ConsoleApp.IntProbenVector();
+		else
+			api = new ConsoleApp.IntProbenVector();
 		Scanner sc = new Scanner(System.in);
-		while(sc.hasNext()) {
+		while (sc.hasNext()) {
 			String commandName = sc.next();
 			Command command = commands.get(commandName);
 			boolean skipGarbage = true;
@@ -523,26 +513,28 @@ public final class ConsoleApp {
 				if (!command.execute())
 					return;
 			} else {
-				System.err.printf("Unknown command %s.\n",commandName);
+				System.err.printf("Unknown command %s.\n", commandName);
 			}
-			if (skipGarbage) sc.nextLine(); // ignore garbage
+			if (skipGarbage)
+				sc.nextLine(); // ignore garbage
 		}
 	}
 
-
 	/**
-	 * @param args
+	 * The main program. It is mainly a wrapper around mainProgram and adds minimal
+	 * exception handling.
+	 *
+	 * @param args Program arguments.
 	 */
 	public static void main(String[] args) {
 		try {
 			mainProgram(args);
 			System.exit(0);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.exit (-2);
+			System.exit(-2);
 		} catch (SyntaxError e) {
-			System.exit (-1);
+			System.exit(-1);
 		}
 	}
 

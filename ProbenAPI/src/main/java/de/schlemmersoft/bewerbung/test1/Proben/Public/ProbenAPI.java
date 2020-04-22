@@ -20,6 +20,11 @@ import de.schlemmersoft.bewerbung.test1.Proben.Public.ProbenAPI.Probe;
  * processd by the calling function. This avoids unnecessary copies or
  * retrieving unnecessary data from a larger database.
  *
+ * Error handling is still suboptimal as this interface allows very few
+ * exceptions to be thrown. This is for example a problem with the SQL
+ * implementation, where the connection to the server might get lost, which
+ * cannot be handled completely by the backend.
+ *
  * @author Tobias Schlemmer
  * @param <T> Type of the measurement data. We allow only Objects as we want to
  *            represent null values
@@ -148,8 +153,9 @@ public interface ProbenAPI<T extends Object> extends Iterable<Probe<T>> {
 	Iterable<Probe<T>> result(Probe.Interpretation key);
 
 	/**
-	 * Retrieve a sample from the dataset. The sample must
-	 * be referenced by its uniqe identifier.
+	 * Retrieve a sample from the dataset. The sample must be referenced by its
+	 * uniqe identifier.
+	 *
 	 * @param id The unique identifier referencing the sample.
 	 * @return A sample that is represented by the unique id.
 	 * @throws NoSuchElementException If the element is not found.

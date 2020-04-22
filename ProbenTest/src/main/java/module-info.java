@@ -1,3 +1,8 @@
+/**
+ * A usage sample for the ProbenAPI
+ * @author Tobias Schlemmer
+ *
+ */
 module de.schlemmersoft.bewerbung.test1.ProbenTest {
     requires de.schlemmersoft.bewerbung.test1.ProbenAPI;
     requires de.schlemmersoft.bewerbung.test1.ProbenVector;

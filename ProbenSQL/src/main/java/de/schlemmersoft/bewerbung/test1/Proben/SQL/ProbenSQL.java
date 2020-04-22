@@ -12,19 +12,28 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
-import org.sqlite.SQLiteErrorCode;
 import org.sqlite.SQLiteException;
 
 import de.schlemmersoft.bewerbung.test1.Proben.Public.ProbenAPI;
 import de.schlemmersoft.bewerbung.test1.Proben.Public.ProbenAPI.Probe.Interpretation;
 
 /**
- * Hello world!
+ * Implementation of the ProbenAPI using JDBC.
+ *
+ * This implementation is only efficient when accessing the whole sample data is
+ * expensive, or when the database changes very frequently.
+ *
+ * @author Tobias Schlemmer
  *
  */
-public class ProbenSQL implements ProbenAPI<Integer>
-{
+public class ProbenSQL implements ProbenAPI<Integer> {
 
+	/**
+	 * The sample of the ProbenSQL implementation.
+	 *
+	 * @author Tobias Schlemmer
+	 *
+	 */
 	public class SQLProbe implements Probe<Integer> {
 		String id;
 
@@ -34,18 +43,18 @@ public class ProbenSQL implements ProbenAPI<Integer>
 
 		public boolean equals(Object other) {
 			if (other instanceof SQLProbe)
-				return id.equals(((SQLProbe)other).id);
+				return id.equals(((SQLProbe) other).id);
 			return false;
 		}
 
 		@Override
-		public boolean equals(Probe<Integer> other) {
-			return getValue().equals(other.getValue());
+		public boolean equals(Probe<?> other) {
+			return id.equals(other.getID());
 		}
 
 		@Override
 		public Probe<Integer> clone() throws CloneNotSupportedException {
-			SQLProbe newprobe = (ProbenSQL.SQLProbe)super.clone();
+			SQLProbe newprobe = (ProbenSQL.SQLProbe) super.clone();
 			newprobe.id = id;
 			return newprobe;
 		}
@@ -66,7 +75,7 @@ public class ProbenSQL implements ProbenAPI<Integer>
 				ZonedDateTime retval = ZonedDateTime.parse(res.getString(1));
 				res.close();
 				return retval;
-			} catch (SQLException e){
+			} catch (SQLException e) {
 				// TODO: implement error handling
 				return null;
 			}
@@ -87,7 +96,7 @@ public class ProbenSQL implements ProbenAPI<Integer>
 				}
 				res.close();
 				return Integer.valueOf(i);
-			} catch (SQLException e){
+			} catch (SQLException e) {
 				// TODO: implement error handling
 				return null;
 			}
@@ -100,11 +109,12 @@ public class ProbenSQL implements ProbenAPI<Integer>
 				throw new IllegalArgumentException();
 			try {
 				if (SQLProbeSetValue == null)
-					SQLProbeSetValue = connection.prepareStatement("UPDATE " + tableName + " SET value = ? WHERE id = ?");
+					SQLProbeSetValue = connection
+							.prepareStatement("UPDATE " + tableName + " SET value = ? WHERE id = ?");
 				SQLProbeSetValue.setInt(1, v.intValue());
 				SQLProbeSetValue.setString(2, id);
 				SQLProbeSetValue.executeUpdate();
-			} catch (SQLException e){
+			} catch (SQLException e) {
 				// TODO: implement error handling
 			}
 		}
@@ -112,10 +122,13 @@ public class ProbenSQL implements ProbenAPI<Integer>
 		@Override
 		public Interpretation getInterpretation() {
 			Integer v = getValue();
-			if (v == null) return Interpretation.FUZZY;
+			if (v == null)
+				return Interpretation.FUZZY;
 			int value = v.intValue();
-			if (value < 0) return Interpretation.BAD;
-			if (value > 0 ) return Interpretation.GOOD;
+			if (value < 0)
+				return Interpretation.BAD;
+			if (value > 0)
+				return Interpretation.GOOD;
 			return Interpretation.FUZZY;
 		}
 
@@ -125,11 +138,21 @@ public class ProbenSQL implements ProbenAPI<Integer>
 		}
 	}
 
+	/**
+	 * SQL implementation of an iterator on samples.
+	 *
+	 * Actually this class is just a wrapper for ResultSet on the sample data table.
+	 *
+	 * It should be closed after usage to avoid resource leaks.
+	 *
+	 * @author Tobias Schlemmer
+	 *
+	 */
 	public class ProbenIterator implements Iterator<Probe<Integer>> {
 		ResultSet queryResult;
 		String current;
 
-		ProbenIterator (ResultSet res) {
+		ProbenIterator(ResultSet res) {
 			current = null;
 			queryResult = res;
 			try {
@@ -141,10 +164,18 @@ public class ProbenSQL implements ProbenAPI<Integer>
 			}
 		}
 
-		public void close() throws SQLException  {
+		/**
+		 * Finish the underlying query by closing its result set. This function should
+		 * be called as early as possible when the data is not needed anymore.
+		 *
+		 * @throws SQLException If an error in the underlying SQL implementation is
+		 *                      detected this exception is thrown.
+		 */
+		public void close() throws SQLException {
 			queryResult.close();
 		}
 
+		@Override
 		public boolean hasNext() {
 			try {
 				return !queryResult.isAfterLast();
@@ -173,6 +204,7 @@ public class ProbenSQL implements ProbenAPI<Integer>
 	class Range implements Iterable<Probe<Integer>> {
 		Integer minimum;
 		Integer maximum;
+
 		Range(Integer min, Integer max) {
 			minimum = min;
 			maximum = max;
@@ -182,14 +214,11 @@ public class ProbenSQL implements ProbenAPI<Integer>
 		public Iterator<Probe<Integer>> iterator() {
 			try {
 				if (SQLGetRangeIds == null)
-					SQLGetRangeIds =
-					  connection.prepareStatement("SELECT id FROM "
-					+ tableName
-					+ " WHERE value >= ? and value <= ? ORDER BY time");
+					SQLGetRangeIds = connection.prepareStatement(
+							"SELECT id FROM " + tableName + " WHERE value >= ? and value <= ? ORDER BY time");
 				SQLGetRangeIds.setInt(1, minimum.intValue());
 				SQLGetRangeIds.setInt(2, maximum.intValue());
 				ResultSet res = SQLGetRangeIds.executeQuery();
-				SQLWarning warn = SQLGetRangeIds.getWarnings();
 				return new ProbenIterator(res);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -206,12 +235,9 @@ public class ProbenSQL implements ProbenAPI<Integer>
 		public Iterator<Probe<Integer>> iterator() {
 			try {
 				if (SQLGetFuzzyResultIds == null)
-					SQLGetFuzzyResultIds =
-					  connection.prepareStatement("SELECT id FROM "
-					+ tableName
-					+ " WHERE value IS NULL OR value == 0 ORDER BY time");
+					SQLGetFuzzyResultIds = connection.prepareStatement(
+							"SELECT id FROM " + tableName + " WHERE value IS NULL OR value == 0 ORDER BY time");
 				ResultSet res = SQLGetFuzzyResultIds.executeQuery();
-				SQLWarning warn = SQLGetFuzzyResultIds.getWarnings();
 				return new ProbenIterator(res);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -235,11 +261,11 @@ public class ProbenSQL implements ProbenAPI<Integer>
 	private PreparedStatement SQLProbeRemoveDate;
 	String tableName;
 
-	ProbenSQL (Connection c, String tablename) throws SQLException {
+	ProbenSQL(Connection c, String tablename) throws SQLException {
 		connection = c;
 		try {
 			statement = connection.createStatement();
-			statement.setQueryTimeout(30);  // set timeout to 30 sec.
+			statement.setQueryTimeout(30); // set timeout to 30 sec.
 		} catch (SQLException e) {
 			connection = null;
 			throw e;
@@ -247,12 +273,20 @@ public class ProbenSQL implements ProbenAPI<Integer>
 		tableName = statement.enquoteIdentifier(tablename, true);
 	}
 
-	public ProbenSQL (String uri, String tablename) throws SQLException {
-		 // create a database connection
+	/**
+	 * Construct a ProbenSQL instance from URI and tablename.
+	 *
+	 * @param uri       JDBC URI to open the database connection.
+	 * @param tablename Name of the database table where the sample data is stored
+	 * @throws SQLException If the underlying SQL implementation encounters an
+	 *                      error, it throws an SQLException.
+	 */
+	public ProbenSQL(String uri, String tablename) throws SQLException {
+		// create a database connection
 		connection = DriverManager.getConnection("jdbc:sqlite:sample.db");
 		try {
 			statement = connection.createStatement();
-			statement.setQueryTimeout(30);  // set timeout to 30 sec.
+			statement.setQueryTimeout(30); // set timeout to 30 sec.
 		} catch (SQLException e) {
 			connection = null;
 			throw e;
@@ -260,7 +294,7 @@ public class ProbenSQL implements ProbenAPI<Integer>
 		tableName = statement.enquoteIdentifier(tablename, true);
 	}
 
-	Connection getConnection () {
+	Connection getConnection() {
 		return connection;
 	}
 
@@ -300,8 +334,9 @@ public class ProbenSQL implements ProbenAPI<Integer>
 	}
 
 	void clearTable() throws SQLException {
-		statement.executeUpdate("DROP TABLE IF EXISTS "+ tableName);
-        statement.executeUpdate("CREATE TABLE " + tableName + "(id STRING not null primary key, time STRING not null, value INTEGER)");
+		statement.executeUpdate("DROP TABLE IF EXISTS " + tableName);
+		statement.executeUpdate(
+				"CREATE TABLE " + tableName + "(id STRING not null primary key, time STRING not null, value INTEGER)");
 	}
 
 	int size() throws SQLException {
@@ -318,7 +353,6 @@ public class ProbenSQL implements ProbenAPI<Integer>
 			if (SQLGetAllIds == null)
 				SQLGetAllIds = connection.prepareStatement("SELECT id FROM " + tableName + " ORDER BY time");
 			ResultSet res = SQLGetAllIds.executeQuery();
-			// TODO Auto-generated method stub
 			return new ProbenIterator(res);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -329,14 +363,14 @@ public class ProbenSQL implements ProbenAPI<Integer>
 
 	@Override
 	public Iterable<Probe<Integer>> range(Integer min, Integer max) {
-		return new Range(min,max);
+		return new Range(min, max);
 	}
 
 	@Override
 	public Iterable<Probe<Integer>> result(Interpretation key) {
 		switch (key) {
 		case GOOD:
-			return new Range(Integer.valueOf(1),Integer.valueOf(Integer.MAX_VALUE));
+			return new Range(Integer.valueOf(1), Integer.valueOf(Integer.MAX_VALUE));
 		case FUZZY:
 			return new FuzzyResult();
 		case BAD:
@@ -350,8 +384,9 @@ public class ProbenSQL implements ProbenAPI<Integer>
 	public SQLProbe get(String id) {
 		try {
 			if (SQLProbeGetId == null)
-				SQLProbeGetId = connection.prepareStatement("SELECT count(*) FROM " + tableName + " WHERE id = ? ORDER BY time");
-			SQLProbeGetId.setString(1,id);
+				SQLProbeGetId = connection
+						.prepareStatement("SELECT count(*) FROM " + tableName + " WHERE id = ? ORDER BY time");
+			SQLProbeGetId.setString(1, id);
 			ResultSet res = SQLProbeGetId.executeQuery();
 			res.next();
 			SQLProbe retval = null;
@@ -372,19 +407,20 @@ public class ProbenSQL implements ProbenAPI<Integer>
 	public SQLProbe add(ZonedDateTime time) {
 		try {
 			if (SQLProbeGetId == null)
-					SQLProbeGetId = connection.prepareStatement("SELECT count(*) FROM " + tableName + " WHERE id = ? ORDER BY time");
+				SQLProbeGetId = connection
+						.prepareStatement("SELECT count(*) FROM " + tableName + " WHERE id = ? ORDER BY time");
 			String id;
 			ResultSet res = null;
 			do {
 				UUID uuid = UUID.randomUUID();
 				id = uuid.toString();
-				SQLProbeGetId.setString(1,id);
+				SQLProbeGetId.setString(1, id);
 				res = SQLProbeGetId.executeQuery();
 				res.next();
 			} while (res.getInt(1) > 0);
 			if (res != null)
 				res.close();
-			return add(id,time);
+			return add(id, time);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -397,36 +433,54 @@ public class ProbenSQL implements ProbenAPI<Integer>
 		try {
 			if (SQLProbeNew == null)
 				SQLProbeNew = connection.prepareStatement("INSERT into " + tableName + " (id,time) VALUES (?,?)");
-			SQLProbeNew.setString(1,id);
-			SQLProbeNew.setString(2,time.toString());
+			SQLProbeNew.setString(1, id);
+			SQLProbeNew.setString(2, time.toString());
 			if (SQLProbeNew.executeUpdate() > 0)
 				return new SQLProbe(id);
 			else
 				return null;
 		} catch (SQLiteException e) {
-			// TODO Auto-generated catch block
 
 			switch (e.getResultCode()) {
 			case SQLITE_CONSTRAINT:
 				throw new IllegalArgumentException();
 			default:
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 				return null;
 			}
 		} catch (SQLException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}
 	}
 
-	public SQLProbe add (String id, ZonedDateTime time, Integer value){
-		SQLProbe sample = add(id,time);
+	/**
+	 * Add a complete sample row to the database table.
+	 *
+	 * @param id    Unique identifier of the sample.
+	 * @param time  Time the measurement has been performed.
+	 * @param value measured value
+	 * @return A sample object that references the table row.
+	 */
+	public SQLProbe add(String id, ZonedDateTime time, Integer value) {
+		SQLProbe sample = add(id, time);
 		if (value != null)
 			sample.setValue(value);
 		return sample;
 	}
 
-	public SQLProbe add (ZonedDateTime time, Integer value){
+	/**
+	 * Add a complete sample row to the database table. The uniqe identifier will be
+	 * assigned to the measurement. It can be retrieved from the returned sample
+	 * object.
+	 *
+	 * @param time  Time the measurement has been performed.
+	 * @param value measured value
+	 * @return A sample object that references the table row.
+	 */
+	public SQLProbe add(ZonedDateTime time, Integer value) {
 		SQLProbe sample = add(time);
 		sample.setValue(value);
 		return sample;
@@ -437,7 +491,7 @@ public class ProbenSQL implements ProbenAPI<Integer>
 		try {
 			if (SQLProbeRemove == null)
 				SQLProbeRemove = connection.prepareStatement("DELETE from " + tableName + " WHERE id = ?");
-			SQLProbeRemove.setString(1,id);
+			SQLProbeRemove.setString(1, id);
 			if (SQLProbeRemove.executeUpdate() == 0)
 				throw new NoSuchElementException();
 
@@ -451,7 +505,8 @@ public class ProbenSQL implements ProbenAPI<Integer>
 	public void remove(Probe<Integer> sample) {
 		try {
 			if (SQLProbeRemoveDate == null)
-				SQLProbeRemoveDate = connection.prepareStatement("DELETE from " + tableName + " WHERE id = ? AND time = ?");
+				SQLProbeRemoveDate = connection
+						.prepareStatement("DELETE from " + tableName + " WHERE id = ? AND time = ?");
 			SQLProbeRemoveDate.setString(1, sample.getID());
 			SQLProbeRemoveDate.setString(2, sample.getTime().toString());
 			if (SQLProbeRemoveDate.executeUpdate() == 0)
@@ -462,6 +517,5 @@ public class ProbenSQL implements ProbenAPI<Integer>
 			e.printStackTrace();
 		}
 	}
-
 
 }
