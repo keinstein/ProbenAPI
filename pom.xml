@@ -27,7 +27,6 @@
     <module>ProbenVector</module>
 
     <module>ProbenTest</module>
-
   </modules>
 
   <url>https://github.com/example/test</url>
@@ -203,6 +202,7 @@
     <!--    <maven.javadoc.plugin.version>2.0</maven.javadoc.plugin.version> -->
     <maven.javadoc.plugin.version>3.2.0</maven.javadoc.plugin.version>
     <jacoco.plugin.version>0.8.5</jacoco.plugin.version>
+    <jacoco.skip>false</jacoco.skip>
 
   </properties>
 
@@ -219,13 +219,21 @@
       <scope>test</scope>
 
     </dependency>
+    <dependency>
 
+      <groupId>org.junit.jupiter</groupId>
+
+      <artifactId>junit-jupiter-params</artifactId>
+
+      <version>${junit.jupiter.version}</version>
+
+      <scope>test</scope>
+
+    </dependency>
   </dependencies>
-
   <build>
 
     <plugins>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
@@ -268,19 +276,24 @@
 
         <version>${maven.surefire.plugin.version}</version>
 	<configuration>
-	  <forkCount>1</forkCount><!-- forking conflicts with jacoco -->
+	  <argLine>@{jacoco.argLine} -ea</argLine>
 	  <reuseForks>true</reuseForks>
+	  <forkCount>1</forkCount>
+	  <!--
+	  <!- - forking conflicts with jacoco - ->
 	  <trimStackTrace>false</trimStackTrace>
+	  -->
           <!-- <useSystemClassLoader>false</useSystemClassLoader>	-->
           <properties>
             <configurationParameters>
               junit.platform.output.capture.stdout = true
-	      junit.platform.output.capture.stderr = true
-	      junit.platform.output.capture.maxBuffer = 10000000
+	      	  junit.platform.output.capture.stderr = true
+	          junit.platform.output.capture.maxBuffer = 10000000
             </configurationParameters>
           </properties>
 	</configuration>
 
+        <!--
 	<executions>
           <execution>
             <id>default-test</id>
@@ -290,7 +303,6 @@
             </goals>
           </execution>
 	</executions>
-        <!--
 	    <dependencies>
             <dependency>
             <groupId>org.junit.platform</groupId>
@@ -343,26 +355,42 @@
         <!--	<version>0.8.2</version> -->
 
         <executions>
-	  <execution>
-	    <id>default-prepare-agent</id>
-	    <goals>
-              <goal>prepare-agent</goal>
-	    </goals>
-	  </execution>
           <execution>
-            <id>default-report</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>report</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>default-check</id>
+            <id>jacoco-check</id>
             <goals>
               <goal>check</goal>
             </goals>
           </execution>
-
+          <execution>
+            	    
+            <id>report</id>
+            	    
+            <phase>test</phase>
+            	    
+            <goals>
+              	      
+              <goal>report</goal>
+              	    
+            </goals>
+            	  
+          </execution>
+          <execution>
+            <id>jacoco-initialize</id>
+            <goals>
+                <goal>prepare-agent</goal>
+            </goals>
+              <configuration>
+                <propertyName>jacoco.argLine</propertyName>
+              </configuration>
+        </execution>
+        <execution>
+            <id>jacoco-site</id>
+            <phase>package</phase>
+            <goals>
+                <goal>report</goal>
+            </goals>
+        </execution>
+ 
           <!--<execution>
 
               <goals>
@@ -392,7 +420,6 @@
         </executions>
 
       </plugin>
-
       <plugin>
 
         <artifactId>maven-javadoc-plugin</artifactId>
@@ -413,8 +440,6 @@
 	  </execution>
 	</executions>
       </plugin>
-
-
 
       <plugin>
 
