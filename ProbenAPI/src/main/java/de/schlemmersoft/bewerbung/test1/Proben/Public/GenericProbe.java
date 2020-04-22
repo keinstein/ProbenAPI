@@ -70,30 +70,34 @@ public abstract class GenericProbe<T extends Object> implements Probe<T>, Clonea
 	public boolean equals(Object other) {
 		if (this == other)
 			return true;
-		if (other instanceof Probe<?>) return equals((Probe<T>)other);
+		if (other instanceof Probe<?>) {
+			Probe<?> tmp = (Probe<?>)other;
+			return equals(tmp);
+		}
 		return false;
 	}
 
 	@Override
-	public boolean equals(Probe<T> other) {
+	public boolean equals(Probe<?> other) {
 		if (value == null && other.getValue() != null)
 			return false;
 		if (value != null && other.getValue() == null)
 			return false;
 		if (value != null) {
-			T o = other.getValue();
-			if (!value.equals(o))
+			if (!value.equals(other.getValue()))
 				return false;
 		}
 		return id.equals(other.getID()) && time.equals(other.getTime());
 	}
 
 	public GenericProbe<T> clone() throws CloneNotSupportedException {
+		@SuppressWarnings("unchecked")
 		GenericProbe<T> c = (GenericProbe<T>) super.clone();
 		if (c == null)
 			throw new CloneNotSupportedException();
-		if (c.value != null)
+		if (c.value != null) {
 			c.value = cloneValue(c.value);
+		}
 		return c;
 	}
 

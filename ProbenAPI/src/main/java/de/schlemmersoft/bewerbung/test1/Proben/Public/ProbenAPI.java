@@ -72,7 +72,7 @@ public interface ProbenAPI<T extends Object> extends Iterable<Probe<T>> {
 		 * @param other the other sample to compare.
 		 * @return #true if both samples describe the same measurement and outcome.
 		 */
-		boolean equals(Probe<T> other);
+		boolean equals(Probe<?> other);
 
 		/**
 		 * Create a copy of this Probe

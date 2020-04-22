@@ -215,6 +215,7 @@ public class GenericProbeTest {
 		testClone(probe);
 	}
 
+	@SuppressWarnings("unused")
 	private static Stream<Arguments> paramsFullConstructor() throws Throwable {
 		return Stream.of(Arguments.of("0", ZonedDateTime.now(), 1, Interpretation.GOOD),
 				Arguments.of("1", ZonedDateTime.now(), 0, Interpretation.FUZZY),
