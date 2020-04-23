@@ -500,10 +500,20 @@ public final class ConsoleApp {
 	 * @throws SyntaxError A syntax error lead to the termination of the program.
 	 */
 	public static void mainProgram(String[] args) throws SQLException, SyntaxError {
-		if (args != null && args.length < 2)
-			api = new ProbenSQL("jdbc:sqlite:" + args[0], args[1]);
-		else
+		boolean useSQL = false;
+		if (args != null && args.length >= 2)
+			useSQL = true;
+		if (useSQL) {
+			System.out.printf("# database jdbc:sqlite:%s, table %s\n",
+					  args[0],
+					  args[1]);
+			ProbenSQL sqlapi = new ProbenSQL("jdbc:sqlite:" + args[0], args[1]);
+			sqlapi.createTable();
+			api = sqlapi;
+		} else {
+			System.out.printf("# in-Memory solution\n");
 			api = new ConsoleApp.IntProbenVector();
+		}
 		Scanner sc = new Scanner(System.in);
 		while (sc.hasNext()) {
 			String commandName = sc.next();
@@ -518,6 +528,9 @@ public final class ConsoleApp {
 			}
 			if (skipGarbage)
 				sc.nextLine(); // ignore garbage
+		}
+		if (useSQL) {
+			((ProbenSQL) api).close();
 		}
 	}
 

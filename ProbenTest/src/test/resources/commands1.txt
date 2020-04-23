@@ -54,3 +54,5 @@ add Sample3 2020-09-09T01:13:13+01:00[Europe/Berlin]  79
 addvalue Sample1 -1
 list
 
+# test for errors
+add Sample4 2020-09-09T01:13:13+01:00[Europe/Berlin]  79

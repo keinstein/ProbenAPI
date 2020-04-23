@@ -333,10 +333,14 @@ public class ProbenSQL implements ProbenAPI<Integer> {
 		}
 	}
 
-	void clearTable() throws SQLException {
-		statement.executeUpdate("DROP TABLE IF EXISTS " + tableName);
+	public void createTable() throws SQLException {
 		statement.executeUpdate(
-				"CREATE TABLE " + tableName + "(id STRING not null primary key, time STRING not null, value INTEGER)");
+				"CREATE TABLE IF NOT EXISTS " + tableName + "(id STRING not null primary key, time STRING not null, value INTEGER)");
+	}
+
+	public void clearTable() throws SQLException {
+		statement.executeUpdate("DROP TABLE IF EXISTS " + tableName);
+		createTable();
 	}
 
 	int size() throws SQLException {
