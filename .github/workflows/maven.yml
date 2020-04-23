@@ -14,3 +14,12 @@ jobs:
           java-version: 14
       - name: Build with Maven
         run: mvn -B package --file pom.xml
+      - run: zip Output.zip */target/*.jar -r */target/site
+      - uses: actions/upload-artifact@v1
+        with:
+          name: Build-Output.zip
+          path: Output.zip
+      - uses: actions/upload-artifact@v1
+        with:
+          name: ProbenTest.jar
+          path: ProbenTest/target/ProbenTest-1.0.0-SNAPSHOT-bin.jar
