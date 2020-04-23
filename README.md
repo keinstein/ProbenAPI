@@ -30,13 +30,50 @@ ProbenTest
 This is a simple console application that allows to manage samples. It is 
 driven by a simple command language that mainly resembles the API.
 
+A summary of the commands and the teir syntax can be printed with the command `help`:
+
+```
+$ java -jar ProbenTest/target/ProbenTest-1.0.0-SNAPSHOT-bin.jar jdbc:sqlite::memory: test
+help
+help
+remove   id [date]
+quit
+# [this line will be output verbatim]
+range    from to
+add      [id] date [number]
+result   GOOD|FUZZY|BAD
+list
+addvalue id [date] value
+$
+```
+
+or with sqlite:
+
+```
+e$ java -jar ProbenTest/target/ProbenTest-1.0.0-SNAPSHOT-bin.jar
+# in-Memory solution
+help
+help
+# [this line will be output verbatim]
+range    from to
+add      [id] date [number]
+result   GOOD|FUZZY|BAD
+list
+addvalue id [date] value
+remove   id [date]
+quit
+quit
+# exiting...
+$
+```
+
 
 Build instructions
 ------------------
 
 On the command line just type:
 
-``` sh
+```
 mvn package
 ```
 
