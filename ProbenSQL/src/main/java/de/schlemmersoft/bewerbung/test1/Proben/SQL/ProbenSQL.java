@@ -160,7 +160,7 @@ public class ProbenSQL implements ProbenAPI<Integer> {
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				throw new NoSuchElementException();
+				throw new RuntimeException(e);
 			}
 		}
 
@@ -196,7 +196,7 @@ public class ProbenSQL implements ProbenAPI<Integer> {
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				throw new NoSuchElementException();
+				throw new RuntimeException(e);
 			}
 		}
 	}
@@ -298,7 +298,7 @@ public class ProbenSQL implements ProbenAPI<Integer> {
 		return connection;
 	}
 
-	void close() throws SQLException {
+	public void close() throws SQLException {
 		if (statement != null) {
 			statement.close();
 			statement = null;
@@ -443,16 +443,17 @@ public class ProbenSQL implements ProbenAPI<Integer> {
 
 			switch (e.getResultCode()) {
 			case SQLITE_CONSTRAINT:
-				throw new IllegalArgumentException();
+				throw new IllegalArgumentException("Trying to add " + id + e.getMessage(),
+								   e);
 			default:
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				return null;
+				throw new RuntimeException(e);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return null;
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -498,6 +499,7 @@ public class ProbenSQL implements ProbenAPI<Integer> {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -515,6 +517,7 @@ public class ProbenSQL implements ProbenAPI<Integer> {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 	}
 

@@ -3,6 +3,7 @@ package de.schlemmersoft.bewerbung.test1.Proben.Test;
 import java.io.PrintStream;
 import java.sql.SQLException;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -530,11 +531,18 @@ public final class ConsoleApp {
 		try {
 			mainProgram(args);
 			System.exit(0);
+		} catch (SyntaxError e) {
+			e.printStackTrace();
+			System.exit(-1);
+		} catch (DateTimeParseException e) {
+			e.printStackTrace();
+			System.exit(-3);
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			System.exit(-4);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			System.exit(-2);
-		} catch (SyntaxError e) {
-			System.exit(-1);
 		}
 	}
 
