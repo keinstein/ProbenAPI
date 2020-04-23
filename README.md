@@ -1,3 +1,7 @@
+![Java CI](https://github.com/keinstein/ProbenAPI/workflows/Java%20CI/badge.svg)
+
+
+
 A very simple sample management
 ===============================
 
