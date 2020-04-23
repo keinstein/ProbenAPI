@@ -18,24 +18,18 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>ProbenAPI</artifactId>
       <version>${project.version}</version>
-      <scope>system</scope>
-      <systemPath>${basedir}/../ProbenAPI/target/ProbenAPI-${project.version}.jar</systemPath>
     </dependency>
     <dependency>
       <!-- This shouldn't be a dep which is packaging: pom -->
       <groupId>${project.groupId}</groupId>
       <artifactId>ProbenVector</artifactId>
       <version>${project.version}</version>
-      <scope>system</scope>
-      <systemPath>${basedir}/../ProbenVector/target/ProbenVector-${project.version}.jar</systemPath>
     </dependency>
     <dependency>
       <!-- This shouldn't be a dep which is packaging: pom -->
       <groupId>${project.groupId}</groupId>
       <artifactId>ProbenSQL</artifactId>
       <version>${project.version}</version>
-      <scope>system</scope>
-      <systemPath>${basedir}/../ProbenSQL/target/ProbenSQL-${project.version}.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>org.xerial</groupId>
@@ -43,23 +37,66 @@
       <version>3.30.1</version>
     </dependency>
   </dependencies>
-    <build>
+  <build>
     <plugins>
-    <plugin>
-      <!-- Build an executable JAR -->
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-jar-plugin</artifactId>
-      <version>3.1.0</version>
-      <configuration>
-        <archive>
-          <manifest>
-            <addClasspath>true</addClasspath>
-            <classpathPrefix>lib/</classpathPrefix>
-            <mainClass>de.schlemmersoft.bewerbung.test1.Proben.Test.ConsoleApp</mainClass>
-          </manifest>
-        </archive>
-      </configuration>
-    </plugin>
+      <plugin>
+	<!-- Build an executable JAR -->
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-jar-plugin</artifactId>
+	<version>3.2.0</version>
+	<configuration>
+          <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <classpathPrefix>lib/</classpathPrefix>
+              <mainClass>de.schlemmersoft.bewerbung.test1.Proben.Test.ConsoleApp</mainClass>
+            </manifest>
+          </archive>
+	</configuration>
+      </plugin>
+   <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-dependency-plugin</artifactId>
+    <executions>
+      <execution>
+        <id>copy-dependencies</id>
+        <phase>package</phase>
+        <goals>
+          <goal>copy-dependencies</goal>
+        </goals>
+        <configuration>
+          <!--<excludeGroupIds>...</excludeGroupIds> -->
+          <outputDirectory>${project.build.directory}/lib</outputDirectory>
+        </configuration>
+      </execution>
+    </executions>
+  </plugin>
+     <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+	<configuration>
+          <descriptors>
+            <descriptor>src/assembly/bin.xml</descriptor>
+          </descriptors>
+	  <!--
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+	  -->
+ 	  <archive>
+            <manifest>
+              <mainClass>de.schlemmersoft.bewerbung.test1.Proben.Test.ConsoleApp</mainClass>
+            </manifest>
+	  </archive>
+	</configuration>
+	<executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 </project>

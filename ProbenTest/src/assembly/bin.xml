@@ -1,0 +1,48 @@
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.0.0 http://maven.apache.org/xsd/assembly-2.0.0.xsd">
+  <id>bin</id>
+  <formats>
+    <format>jar</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <moduleSets>
+    <moduleSet>
+      
+      <!-- Enable access to all projects in the current multimodule build! -->
+      <useAllReactorProjects>true</useAllReactorProjects>
+      <includeSubModules>true</includeSubModules>
+      
+      <!-- Now, select which projects to include in this module-set. -->
+      <includes>
+	<include>de.schlemmersoft.bewerbung.test1:ProbenSQL</include>
+	<include>de.schlemmersoft.bewerbung.test1:ProbenVector</include>
+	<include>de.schlemmersoft.bewerbung.test1:ProbenSQL</include>
+      </includes>
+      <binaries>
+	<includeDependencies>true</includeDependencies>
+	<outputDirectory>modules</outputDirectory>
+	<unpack>true</unpack>
+      </binaries>
+    </moduleSet>
+  </moduleSets>
+  <!--
+  <fileSets>
+    <fileSet>
+      <directory>target/classes</directory>
+      <outputDirectory>modules/maven-assembly-plugin</outputDirectory>
+    </fileSet>
+  </fileSets>
+-->
+
+  <dependencySets>
+    <dependencySet>
+      <unpack>true</unpack>
+      <useTransitiveDependencies>true</useTransitiveDependencies>
+      <useTransitiveFiltering>true</useTransitiveFiltering>
+      <useProjectArtifact>true</useProjectArtifact>
+      <!--   <outputDirectory>modules/maven-assembly-plugin</outputDirectory> -->
+     <outputDirectory></outputDirectory>
+    </dependencySet>
+  </dependencySets>
+</assembly>

@@ -113,6 +113,51 @@
     </dependency>
   </dependencies>
   <build>
+    <pluginManagement>
+      <plugins>
+	<plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${maven.compiler.plugin.version}</version>
+          <configuration>
+            <showWarnings>true</showWarnings>
+            <showDeprecation>true</showDeprecation>
+          </configuration>
+	</plugin>
+	<plugin>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>${maven.javadoc.plugin.version}</version>
+          <configuration>
+            <source>8</source>
+            <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
+	    <aggregate>true</aggregate>
+	    <javaApiLinks>
+	      <property>
+		<name>api_8</name>
+		<value>https://docs.oracle.com/javase/8/docs/api/</value>
+	      </property>
+	    </javaApiLinks>
+	    <validateLinks>true</validateLinks>
+          </configuration>
+	  <executions>
+	    <execution>
+	      <id>attach-javadocs</id>
+	      <goals>
+		<goal>jar</goal>
+	      </goals>
+	    </execution>
+	  </executions>
+	</plugin>
+        <plugin>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>3.2.0</version>
+          <configuration>
+            <descriptors>
+              <descriptor>src/assembly/bin.xml</descriptor>
+            </descriptors>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -257,6 +302,14 @@
         <configuration>
           <source>8</source>
           <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
+	  <aggregate>true</aggregate>
+	  <javaApiLinks>
+	    <property>
+	    <name>api_8</name>
+	    <value>https://docs.oracle.com/javase/8/docs/api/</value>
+	    </property>
+	  </javaApiLinks>
+	  <validateLinks>true</validateLinks>
         </configuration>
 	<executions>
 	  <execution>
